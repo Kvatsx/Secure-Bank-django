@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+              crossorigin="anonymous">
+
+        {% load static %}
+
+        {% block head %}
+            <link rel="stylesheet" href="{% static 'SecureBank/style.css' %}" type="text/css">
+            <meta charset="UTF-8">
+            <title>Base</title>
+        {% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            <h2>Need to add a Nav Bar and Login button</h2>
+            {% block body %}
+
+            {% endblock %}
+        </div>
+    </body>
+</html>
