@@ -10,8 +10,7 @@ To setup Project interpreter in pyCharm:
 2. select Project: Secure....
 3. Project interpreter drop down menu then \python.exe
 ```
-Home Page:- <http://127.0.0.1:8000/SecureBank/>
-Login page:- <http://127.0.0.1:8000/SecureBank/login/>
+Login Page:- <http://127.0.0.1:8000/SecureBank/>
 
 Project Dir:
 SecureBankSystem/
@@ -26,3 +25,7 @@ SecureBankSystem/
 				home.html
 			base.html		# Our base html file. All other html files extend this file.
 ```
+
+# TODO
+1. Implement backend for Login.
+2. Create a user profile page with Navbar choices.
