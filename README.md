@@ -9,9 +9,10 @@ To setup Project interpreter in pyCharm:
 1. Open settings 
 2. select Project: Secure....
 3. Project interpreter drop down menu then \python.exe
-```
+   
 Login Page:- <http://127.0.0.1:8000/SecureBank/>
 
+```
 Project Dir:
 SecureBankSystem/
 	SecuerBank/  <-- Our app
@@ -28,4 +29,7 @@ SecureBankSystem/
 
 # TODO
 1. Implement backend for Login.
-2. Create a user profile page with Navbar choices.
+2. Need to add captcha or OTP verification.
+3. Setup database for users.
+4. Create a user profile page with Navbar choices.
+5. Create a UI for required functions.
