@@ -7,4 +7,4 @@ def home(request):
     name = 'Kaustav Vats'
 
     args = {'myName': name}
-    return render(request, 'SecureBank/home.html', args)
+    return render(request, 'SecureBank/login.html', args)

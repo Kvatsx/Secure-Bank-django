@@ -9,12 +9,11 @@ To setup Project interpreter in pyCharm:
 1. Open settings 
 2. select Project: Secure....
 3. Project interpreter drop down menu then \python.exe
-
-Home Page:- http://127.0.0.1:8000/SecureBank/
-Login page:- http://127.0.0.1:8000/SecureBank/login/
+```
+Home Page:- <http://127.0.0.1:8000/SecureBank/>
+Login page:- <http://127.0.0.1:8000/SecureBank/login/>
 
 Project Dir:
-
 SecureBankSystem/
 	SecuerBank/  <-- Our app
 		static/		# contains bootstrap javascript and css.
@@ -26,3 +25,4 @@ SecureBankSystem/
 				login.html 
 				home.html
 			base.html		# Our base html file. All other html files extend this file.
+```
