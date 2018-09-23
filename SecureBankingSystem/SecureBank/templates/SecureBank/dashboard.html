@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+        <link rel="stylesheet" href="{% static 'SecureBank/style.css' %}" type="text/css">
+        <title>Dashboard</title>
+{% endblock %}
+
+{% block body %}
+    <h3>Hello {{ Username }}</h3>
+{% endblock %}
