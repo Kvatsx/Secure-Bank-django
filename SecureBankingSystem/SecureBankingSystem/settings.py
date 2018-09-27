@@ -121,4 +121,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/SecureBank/'
+#LOGIN_REDIRECT_URL = '/SecureBank/'

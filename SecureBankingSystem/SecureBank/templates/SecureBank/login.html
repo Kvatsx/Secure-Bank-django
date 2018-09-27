@@ -22,22 +22,10 @@
                             <h3 class="mb-0">Login</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form" role="form" autocomplete="off" id="loginForm" novalidate="" method="POST">
+                            <form class="form" role="form" autocomplete="off" action="{%url 'login'%}" method="POST">
                                 {% csrf_token %}
                                 {{ form.as_p }}
-                                <div class="form-group">
-                                    <label for="uname1">Username</label>
-                                    <input type="text" class="form-control" name="username" id="username" required="">
-                                    <div class="invalid-feedback">Please enter your username or email</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <input type="password" class="form-control" id="password" aria-describedby="passwordHelpBlock">
-                                    <div class="invalid-feedback">Please enter a password</div>
-                                    <p id="passwordHelpBlock" class="form-text text-muted">
-                                        Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-                                    </p>
-                                </div>
+
                                 <button type="submit" class="btn btn-success float-right btn-lg" id="btnLogin">Login</button>
                             </form>
                         </div>

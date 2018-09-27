@@ -5,6 +5,9 @@ from django.contrib.auth.views import login
 
 
 urlpatterns = [
-    url(r'^$', views.home),
-    # url(r'^login/$', login, {'template_name': 'SecureBank/login.html'})
+    #url(r'^$', views.home),
+    url(r'^login/', views.login_user, name = 'login'),
+    url(r'^logout/', views.logout_user, name='logout'),
+    url(r'^home_internal_user/$',views.home_internal_user,name = 'home_internal_user'),
+    url(r'^home_external_user/$',views.home_external_user,name="home_external_user"),
 ]
