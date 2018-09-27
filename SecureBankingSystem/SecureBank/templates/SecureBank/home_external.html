@@ -1,0 +1,31 @@
+{% extends 'home_external_base.html' %}
+{% load static %}
+
+{% block head %}
+        <link rel="stylesheet" href="{% static 'SecureBank/style.css' %}" type="text/css">
+        <title>Home</title>
+{% endblock %}
+
+{% block body %}
+    <section class="container-fluid" style="margin-top: 80px">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-12 text-right">
+                    <h5>{{user}}, Welcome to IIITD Bank - External User</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ <nav class="navbar navbar-default">
+  <div class="container-fluid" style="...">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">Modify Details</a></li>
+      <li><a href="#">Make Transaction</a></li>
+      <li><a href="#">View Transactions</a></li>
+    </ul>
+  </div>
+</nav>
+{% endblock %}
+

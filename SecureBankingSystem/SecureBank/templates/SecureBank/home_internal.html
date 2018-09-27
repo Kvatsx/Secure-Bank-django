@@ -1,0 +1,19 @@
+{% extends 'home_internal_base.html' %}
+{% load static %}
+
+{% block head %}
+        <link rel="stylesheet" href="{% static 'SecureBank/style.css' %}" type="text/css">
+        <title>Home</title>
+{% endblock %}
+
+{% block body %}
+    <section class="container-fluid" style="margin-top: 80px">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-12 text-right">
+                    <h5>{{user}}, Welcome to IIITD Bank - Internal User</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
