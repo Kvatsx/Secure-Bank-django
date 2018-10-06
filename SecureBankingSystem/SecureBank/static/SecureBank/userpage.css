@@ -1,0 +1,10 @@
+a.mdl-js-ripple-effect {
+  display: inline-block;
+  position: relative;
+}
+
+.mdl-list__item	{
+    position: relative;
+    background: #6ab344;
+    height: 160px;
+}

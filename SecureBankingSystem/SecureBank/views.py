@@ -55,4 +55,4 @@ def home_internal_user(request):
     args = {
         'user': request.user.username
     }
-    return render(request, 'SecureBank/home_internal.html', args)
+    return render(request, 'SecureBank/summary.html', args)
