@@ -5,6 +5,21 @@ a.mdl-js-ripple-effect {
 
 .mdl-list__item	{
     position: relative;
-    background: #6ab344;
+    background: #d7d9dd;
     height: 160px;
+}
+
+/*css for summary.html*/
+.summary-accounts	{
+	height: 40px;
+}
+.summary-accounts-body	{
+	overflow: auto;
+}
+
+/*css for edit_profile.html*/
+.name: {
+	display:flex;
+	margin-top: 10px;
+	justify-content: left;
 }
