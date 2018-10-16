@@ -7,49 +7,6 @@
 {% endblock %}
 
 {% block body %}
-<<<<<<< HEAD
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xl-5 text-center">
-                <h1>Welcome to IIITD Bank</h1>
-            </div>
-        </div>
-    </div>
-    <br>
-    <section class="row justify-content-center">
-        <section class="col-12 col-sm-6 col-md-3">
-            <div class="card card-outline-secondary">
-                <div class="card-header">
-                    <h3 class="mb-0">Login</h3>
-                </div>
-                <div class="card-body">
-                    <form class="form" role="form" autocomplete="off" method="POST" action="{% url 'loginView' %}">
-                        {% csrf_token %}
-
-                        <div class="form-group">
-                            <label>Username</label>
-                            <input type="text" class="form-control" name="username" id="username" value="">
-                            <div class="invalid-feedback">Please enter your username or email</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" class="form-control" id="password" aria-describedby="passwordHelpBlock">
-                            <div class="invalid-feedback">Please enter a password</div>
-                            <p id="passwordHelpBlock" class="form-text text-muted">
-                                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-                            </p>
-                        </div>
-
-                        <button type="submit" class="btn btn-success float-right btn-lg" id="btnLogin">Login</button>
-
-                    </form>
-                </div>
-                <!--/card-body-->
-            </div>
-        </section>
-    </section>
-=======
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <header class="mdl-layout__header">
             <div class="mdl-layout__header-row">
@@ -110,5 +67,4 @@
             </section>
         </div>
     </main>
->>>>>>> master
 {% endblock %}
