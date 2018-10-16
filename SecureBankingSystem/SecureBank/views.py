@@ -50,6 +50,21 @@ def home_external_user(request):
     }
     return render(request, 'SecureBank/home_external.html', args)
 
+
+@login_required()
+def fundtransfer(request):
+    args = {
+        'user': request.user.username
+    }
+    return render(request, 'SecureBank/funds_transfer.html', args)
+
+@login_required()
+def profile(request):
+    args = {
+        'user': request.user.username
+    }
+    return render(request, 'SecureBank/edit_profile.html', args)
+
 @login_required()
 def home_internal_user(request):
     args = {
