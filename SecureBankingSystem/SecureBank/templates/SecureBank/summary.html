@@ -1,0 +1,61 @@
+{% extends 'SecureBank/userpage_base.html' %}
+
+
+{% block main_content %}
+    <div class="page-content mdl-grid">
+    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+    		<span>Total Balance: $1123</span>
+    	</div>
+    	<div class = "summary-balance mdl-cell mdl-grid">
+    		<table class="summary-accounts mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+				<thead>
+					<tr>
+						<th>Account Number</th>
+						<th>Balance</th>
+					</tr>
+				</thead>
+				<tbody clas="summary-accounts-body">
+					<tr>
+						<td>1</td>
+						<td>$2.90</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>$1.25</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>$2.35</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>$2.90</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>$1.25</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>$2.35</td>
+					</tr>
+				</tbody>
+			</table>
+    	</div>
+
+    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+    		<span>Last Activity: </span>
+    	</div>
+    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+    		<span>Last password change: </span>
+    	</div>
+
+    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+    		<span>Last site visit: </span>
+    	</div>
+    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+    		<span>Last Failed Login Attempt: </span>
+    	</div>
+    	
+    </div>
+{% endblock %}

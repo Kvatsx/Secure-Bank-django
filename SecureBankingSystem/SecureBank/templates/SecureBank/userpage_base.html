@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{% static 'SecureBank/userpage.css' %}">
+    <title>Internal User</title>
+{% endblock %}
+
+{% block body %}
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="sbs-title mdl-layout-title">
+                    <img class="sbs-logo-image" src = "{% static 'SecureBank/logo2.png' %}" height="60"/>
+                </span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+
+                <!-- Left aligned menu below button -->
+                <button id="userpage-menu-lower-left"
+                        class="mdl-button mdl-js-button mdl-js-ripple-effect  mdl-color-text--white">
+                    <span>{{ user }}</span>
+                    <i class="material-icons">person</i>
+                </button>
+
+                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                    for="userpage-menu-lower-left">
+                  <li class="mdl-menu__item">Edit Profile</li>
+                  <a href="{% url 'logout' %}"><li class="mdl-menu__item">Logout</li></a>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <header class="userpage-drawer-header">
+                <div class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                        <!-- <img class="sbs-logo-image" src = "{% static 'SecureBank/avatar.png' %}"/> -->
+                        <i class="material-icons mdl-list__item-avatar">person</i>
+                        <span class="userpage-username">{{user}}</span>
+                    </span>
+                </div>
+            </header>
+            <nav class="mdl-navigation">
+                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect mdl-navigation__link--current" href="{% url 'home_internal_user' %}">Account Summary</a>
+                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Passbook</a>
+                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Credit</a>
+                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Debit</a>
+                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Funds Transfer</a>
+                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Edit Profile</a>
+            </nav>
+        </div>
+        <main class="mdl-layout__content">
+
+        {% block main_content %}
+            content
+        {% endblock %}
+        </main>
+    </div>
+{% endblock %}
