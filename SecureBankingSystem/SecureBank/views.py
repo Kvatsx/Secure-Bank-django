@@ -49,7 +49,7 @@ def home_external_user(request):
     args = {
         'user': request.user.username
     }
-    return render(request, 'SecureBank/home_external.html', args)
+    return render(request, 'SecureBank/summary.html', args)
 
 
 @login_required()
