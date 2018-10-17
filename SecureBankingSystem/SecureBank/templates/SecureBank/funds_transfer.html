@@ -3,31 +3,32 @@
 
 {% block main_content %}
     <div class="page-content">
-    	<form action="#" method="post" id="funds_transfer_form">  
+        <form action="#" method="post" id="funds_transfer_form" class="fundtransfer-form">  
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                <input type="text" value="" class="mdl-textfield__input" id="funds_transfer_user_account" readonly>
+                <input type="hidden" value="" name="funds_transfer_user_account">
+                <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                <label class="mdl-textfield__label" for="funds_transfer_user_account">Account</label>
+                <ul for="funds_transfer_user_account" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    <li class="mdl-menu__item" data-val="Account 1" data-selected="true">Account 1</li>
+                    <li class="mdl-menu__item" data-val="Account 2">Account 2</li>
+                    <li class="mdl-menu__item" data-val="Account 3">Account 3</li>
+            </div>    
 
-			<div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-				<select class="mdl-selectfield__select" id="funds_transfer_user_account">
-					<option value="Account1">Account 1</option>
-					<option value="Account2">Account 2</option>
-					<option value="Account3">Account 3</option>
-				</select>
-				<label class="mdl-textfield__label" for="funds_transfer_user_account">Beneficiary Account Number</label>
-			</div>	
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" pattern="^[0-9]*$" id="funds_transfer_beneficiary_account">
+                <label class="mdl-textfield__label" for="funds_transfer_beneficiary_account">Beneficiary Account Number</label>
+                <span class="mdl-textfield__error">Enter a number</span>
+            </div>
 
-			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				<input class="mdl-textfield__input" type="text" pattern="^[0-9]*$" id="funds_transfer_beneficiary_account">
-				<label class="mdl-textfield__label" for="funds_transfer_beneficiary_account">Beneficiary Account Number</label>
-				<span class="mdl-textfield__error">Enter a number</span>
-			</div>
-
-			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				<input class="mdl-textfield__input" type="text" pattern="^[1-9][0-9]*$" id="funds_transfer_amount">
-				<label class="mdl-textfield__label" for="funds_transfer_amount">Amount (INR)</label>
-				<span class="mdl-textfield__error">Enter integer number greater than 0</span>
-			</div>
-			<button type="submit" form="funds_transfer_form" value="Submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-			Next
-			</button>
-    	</form>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" pattern="^[1-9][0-9]*$" id="funds_transfer_amount">
+                <label class="mdl-textfield__label" for="funds_transfer_amount">Amount (INR)</label>
+                <span class="mdl-textfield__error">Enter integer number greater than 0</span>
+            </div>
+            <button type="submit" form="funds_transfer_form" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">
+            Next
+            </button>
+        </form>
     </div>
 {% endblock %}

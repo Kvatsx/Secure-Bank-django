@@ -18,8 +18,26 @@ a.mdl-js-ripple-effect {
 }
 
 /*css for edit_profile.html*/
-.name: {
+.profile-name {
 	display:flex;
-	margin-top: 10px;
+/*	margin-top: 10px;
+	padding: 10px;*/
 	justify-content: left;
+}
+
+
+.profile-form, .fundtransfer-form{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 40px;
+
+}
+
+a {
+	text-decoration: none;
+}
+.logout-button	{
+	color: firebrick;
 }

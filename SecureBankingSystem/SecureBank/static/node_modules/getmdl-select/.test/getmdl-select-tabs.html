@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.0/material.blue-light_blue.min.css">
+    <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+   <!--getmdl-select-->
+   <link rel="stylesheet" href="../getmdl-select.min.css">
+   <script defer src="../getmdl-select.min.js"></script>
+
+
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row"></div>
+        <div class="mdl-layout__tab-bar">
+            <a href="#tab-1" class="mdl-layout__tab is-active">Tab 1</a>
+            <a href="#tab-2" class="mdl-layout__tab">Tab 2</a>
+        </div>
+    </header>
+    <main class="mdl-layout__content">
+        <section class="mdl-layout__tab-panel is-active" id="tab-1">
+            <h4>Tab 1</h4>
+            <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--4-col">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fullwidth getmdl-select__fix-height">
+                        <input class="mdl-textfield__input" value="US/Central" type="text" id="timeZone1" name="timeZone2" readonly tabIndex="-1"/>
+                        <label class="mdl-textfield__label" for="timeZone1">Time Zone</label>
+                        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="timeZone1">
+                            <li class="mdl-menu__item">US/Alaska</li>
+                            <li class="mdl-menu__item">US/Aleutian</li>
+                            <li class="mdl-menu__item">US/Arizona</li>
+                            <li class="mdl-menu__item">US/Central</li>
+                            <li class="mdl-menu__item">US/East-Indiana</li>
+                            <li class="mdl-menu__item">US/Eastern</li>
+                            <li class="mdl-menu__item">US/Hawaii</li>
+                            <li class="mdl-menu__item">US/Indiana-Starke</li>
+                            <li class="mdl-menu__item">US/Michigan</li>
+                            <li class="mdl-menu__item">US/Mountain</li>
+                            <li class="mdl-menu__item">US/Pacific</li>
+                            <li class="mdl-menu__item">US/Pacific-New</li>
+                            <li class="mdl-menu__item">US/Samoa</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="tab-2">
+            <h4>Tab 2</h4>
+            <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--4-col">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fullwidth">
+                        <input class="mdl-textfield__input" value="US/Central" type="text" id="timeZone2" name="timeZone2" readonly tabIndex="-1"/>
+                        <label class="mdl-textfield__label" for="timeZone2">Time Zone</label>
+                        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="timeZone2">
+                            <li class="mdl-menu__item">US/Alaska</li>
+                            <li class="mdl-menu__item">US/Aleutian</li>
+                            <li class="mdl-menu__item">US/Arizona</li>
+                            <li class="mdl-menu__item">US/Central</li>
+                            <li class="mdl-menu__item">US/East-Indiana</li>
+                            <li class="mdl-menu__item">US/Eastern</li>
+                            <li class="mdl-menu__item">US/Hawaii</li>
+                            <li class="mdl-menu__item">US/Indiana-Starke</li>
+                            <li class="mdl-menu__item">US/Michigan</li>
+                            <li class="mdl-menu__item">US/Mountain</li>
+                            <li class="mdl-menu__item">US/Pacific</li>
+                            <li class="mdl-menu__item">US/Pacific-New</li>
+                            <li class="mdl-menu__item">US/Samoa</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>
