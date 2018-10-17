@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block head %}
+    <!--getmdl-select-->
+    <link rel="stylesheet" href="{% static '/node_modules/getmdl-select/getmdl-select.min.css' %}">
+    <script defer src="{% static '/node_modules/getmdl-select/getmdl-select.min.js' %}""></script>
 	<link rel="stylesheet" type="text/css" href="{% static 'SecureBank/userpage.css' %}">
     <title>Internal User</title>
 {% endblock %}
@@ -27,7 +30,8 @@
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
                     for="userpage-menu-lower-left">
                   <li class="mdl-menu__item">Edit Profile</li>
-                  <a href="{% url 'logout' %}"><li class="mdl-menu__item">Logout</li></a>
+                  <a href="{% url 'logout' %}"><li class="mdl-menu__item logout-button">Logout</li></a>
+              </ul>
             </div>
         </header>
         <div class="mdl-layout__drawer">

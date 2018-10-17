@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+
+  <!-- getmdl -->
+   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+   <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
+   <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+   <!--getmdl-select-->
+   <link rel="stylesheet" href="../getmdl-select.min.css">
+   <script defer src="../getmdl-select.min.js"></script>
+</head>
+<body>
+
+<form style="width: 400px; /*background-color: #81c784;*/ margin: 20px">
+  <!--<div class="mdl-textfield mdl-js-textfield">-->
+    <!--<input class="mdl-textfield__input" type="text" id="sample1">-->
+    <!--<label class="mdl-textfield__label" for="sample1">Text...</label>-->
+  <!--</div>-->
+  <label>Basic select:</label><br/>
+  <div class="mdl-textfield mdl-js-textfield getmdl-select">
+    <input value="" type="text" class="mdl-textfield__input" id="country" readonly/>
+    <input value="" type="hidden" name="country"/>
+    <label class="mdl-textfield__label" for="country">Sound</label>
+    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="country">
+      <li class="mdl-menu__item" data-val="1">On</li>
+      <li class="mdl-menu__item" data-val="0">Off</li>
+    </ul>
+  </div>
+
+  <br/>
+  <label>Select with floating label:</label><br/>
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+    <input class="mdl-textfield__input" value="" id="country2" readonly/>
+    <input value="" type="hidden" name="country2"/>
+    <label class="mdl-textfield__label" for="country2">Genre</label>
+    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="country2">
+      <li class="mdl-menu__item" data-val="BRA">Folk</li>
+      <li class="mdl-menu__item" data-val="DEU">Pop</li>
+      <li class="mdl-menu__item" data-val="RUS">Rock</li>
+      <li class="mdl-menu__item" data-val="FRA">Jazz</li>
+    </ul>
+  </div>
+
+  <br/>
+  <label>Select with arrow:</label><br/>
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+    <input class="mdl-textfield__input" value="" id="country12" readonly/>
+    <input value="" type="hidden" name="country12"/>
+    <label>
+      <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+    </label>
+    <label class="mdl-textfield__label" for="country12">Country</label>
+    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="country12">
+      <li class="mdl-menu__item" data-val="BRA">Brazil</li>
+      <li class="mdl-menu__item" data-val="DEU">Germany</li>
+      <li class="mdl-menu__item" data-val="RUS">Russia</li>
+      <li class="mdl-menu__item" data-val="FRA">France</li>
+      <li class="mdl-menu__item" data-val="BLR" data-selected="true">Belarus</li>
+    </ul>
+  </div>
+
+  <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;floating-label getmdl-select">-->
+    <!--<input class="mdl-textfield__input" value="" id="country3" readonly/>-->
+    <!--<input value="" type="hidden" name="country3"/>-->
+    <!--<label class="mdl-textfield__label" for="country3">Country</label>-->
+    <!--<ul class="mdl-menu mdl-menu&#45;&#45;bottom-left mdl-js-menu" for="country3">-->
+      <!--<li class="mdl-menu__item" data-val="BLR">Belarus</li>-->
+      <!--<li class="mdl-menu__item" data-val="RUS">Russia</li>-->
+    <!--</ul>-->
+  <!--</div>-->
+
+  <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;floating-label getmdl-select">-->
+    <!--<input class="mdl-textfield__input" value="Germany" id="country4" readonly/>-->
+    <!--<input value="DEU" type="hidden" name="country4"/>-->
+    <!--<label class="mdl-textfield__label" for="country4">Country</label>-->
+    <!--<ul class="mdl-menu mdl-menu&#45;&#45;bottom-left mdl-js-menu" for="country4">-->
+      <!--<li class="mdl-menu__item" data-val="BLR">Belarus</li>-->
+      <!--<li class="mdl-menu__item" data-val="RUS">Russia</li>-->
+      <!--<li class="mdl-menu__item" data-val="DEU">Germany</li>-->
+    <!--</ul>-->
+  <!--</div>-->
+
+  <button style="display: block;" type="submit">Send</button>
+</form>
+
+</body>
+</html>
