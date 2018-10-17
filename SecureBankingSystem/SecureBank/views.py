@@ -44,9 +44,9 @@ def login_user(request):
         if user is not None and result['success']:
             login(request, user)
             if (user.is_staff):
-                return redirect('home_internal_user')
+                return redirect('user')#change "user" accordingly for internal user
             else:
-                return redirect('home_external_user')
+                return redirect('user')
             messages.success(request, 'New comment added with success!')
         else:
             args['wrong_credentials'] = True
@@ -66,7 +66,7 @@ def home_external_user(request):
     args = {
         'user': request.user.username
     }
-    return render(request, 'SecureBank/home_external.html', args)
+    return render(request, 'SecureBank/summary.html', args)
 
 
 @login_required()
@@ -88,4 +88,4 @@ def home_internal_user(request):
     args = {
         'user': request.user.username
     }
-    return render(request, 'SecureBank/summary.html', args)
+    return render(request, 'SecureBank/summary.html', args)#change "summary.html" accordingly for internal user

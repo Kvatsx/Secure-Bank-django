@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block head %}
+    <!--getmdl-select-->
+    <link rel="stylesheet" href="{% static '/node_modules/getmdl-select/getmdl-select.min.css' %}">
+    <script defer src="{% static '/node_modules/getmdl-select/getmdl-select.min.js' %}""></script>
 	<link rel="stylesheet" type="text/css" href="{% static 'SecureBank/userpage.css' %}">
     <title>Internal User</title>
 {% endblock %}
@@ -27,7 +30,8 @@
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
                     for="userpage-menu-lower-left">
                   <li class="mdl-menu__item">Edit Profile</li>
-                  <a href="{% url 'logout' %}"><li class="mdl-menu__item">Logout</li></a>
+                  <a href="{% url 'logout' %}"><li class="mdl-menu__item logout-button">Logout</li></a>
+              </ul>
             </div>
         </header>
         <div class="mdl-layout__drawer">
@@ -40,20 +44,31 @@
                     </span>
                 </div>
             </header>
+
+            <!-- note: id of <a> and the url is same-->
             <nav class="mdl-navigation">
-                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect mdl-navigation__link--current" href="{% url 'home_internal_user' %}">Account Summary</a>
-                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Passbook</a>
-                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Credit</a>
-                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Debit</a>
-                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'fundtransfer' %}">Funds Transfer</a>
-                <a class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'profile' %}">Edit Profile</a>
+                <a id="user" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect" href="{% url 'user' %}">Account Summary</a>
+                <a id="passbook" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Passbook</a>
+                <a id="credit" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Credit</a>
+                <a id="debit" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Debit</a>
+                <a id="fundtransfer" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'fundtransfer' %}">Funds Transfer</a>
+                <a id="profile" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'profile' %}">Edit Profile</a>
             </nav>
         </div>
         <main class="mdl-layout__content">
-
         {% block main_content %}
-            content
+            content of the main section here
         {% endblock %}
         </main>
     </div>
+
+
+    <!-- activate the current page in nav bar -->
+    <script type="text/javascript">
+        var pageurl = window.location.pathname;
+        var urlarr = pageurl.split("/");
+        var cur_page = urlarr[urlarr.length-2];
+        console.log(cur_page);
+        document.getElementById(cur_page).classList.add("mdl-navigation__link--current");
+    </script>
 {% endblock %}
