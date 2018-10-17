@@ -17,24 +17,29 @@
             </div>
         </header>
     <main class="mdl-layout__content mdl-color--grey-50">
-        <div class="login-content">  
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xl-5 text-center">
-                        <h1>Welcome to IIITD Bank, Login here!</h1>
-                    </div>
-                </div>
-            </div>
+        <div class="jumbotron jumbotron-fluid">
+              <div class="container text-center">
+                    <h2>Welcome to IIITD Bank, Login here!</h2>
+              </div>
+        </div>
+{#        <div class="login-content">#}
+{#            <div class="container">#}
+{#                <div class="row justify-content-center">#}
+{#                    <div class="col-xl-10 text-center">#}
+{#                        <h2>Welcome to IIITD Bank, Login here!</h2>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
             <section class="row justify-content-center">
                 <section class="col-12 col-sm-6 col-md-3">
                     <div class="card card-outline-secondary">
                             <div class="card-header">
-                                <h3 class="mb-0">Login</h3>
+                                <h4 class="mb-0 text-center">Login</h4>
                             </div>
                             <div class="card-body">
                                 <form class="form" role="form" autocomplete="off" action="{%url 'login'%}" method="POST">
                                     {% csrf_token %}
-    {#                                {{ form.as_p }}#}
+                                    {{ form.as_p }}
 
                                     <div class="form-group">
                                         <label>Username</label>
@@ -50,11 +55,14 @@
                                             Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
                                         </p>
                                     </div>
+                                    <!--/Google reCAPTCHA-->
+                                    <script src='https://www.google.com/recaptcha/api.js'></script>
+                                    <div class="g-recaptcha" data-sitekey="6LeXc3UUAAAAACg_4NVtyvAPk8-PirBRS33r_G5S" ></div>
 
                                     <br>
                                     {% if wrong_credentials %}
                                         <p>
-                                            Wrong Credentials
+                                            Wrong Credentials!
                                         </p>
                                     {% endif %}
 
