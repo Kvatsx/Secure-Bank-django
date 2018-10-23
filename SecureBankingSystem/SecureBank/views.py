@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from SecureBank.utils import get_value
+from SecureBank.utils import get_value, SecureBankException
 from django.http import HttpResponse
 from django.conf import settings
 
@@ -40,11 +40,11 @@ def login_user(request):
         response = urllib.request.urlopen(req)
         result = json.loads(response.read().decode())
 
-        print(user is None)
+        print("User == None", user is None)
         if user is not None and result['success']:
             login(request, user)
             if (user.is_staff):
-                return redirect('user')#change "user" accordingly for internal user
+                return redirect('user') #change "user" accordingly for internal user
             else:
                 return redirect('user')
             messages.success(request, 'New comment added with success!')
@@ -61,19 +61,22 @@ def logout_user(request):
     #else:
     #return HttpResponse('click on button first to logout')
 
-@login_required()
-def home_external_user(request):
-    args = {
-        'user': request.user.username
-    }
-    return render(request, 'SecureBank/summary.html', args)
-
 
 @login_required()
 def fundtransfer(request):
     args = {
-        'user': request.user.username
+        'user': request.user.username,
+        'error': '',
     }
+    if request.method != 'POST':
+        return render(request, 'SecureBank/funds_transfer.html', args)
+    SenderAccountNumber = get_value(request.POST, 'funds_transfer_user_account')
+    BeneficiaryAccountNumber = get_value(request.POST, 'funds_transfer_beneficiary_account')
+    Amount = get_value(request.POST, 'funds_transfer_amount')
+    # try:
+        # transaction = Transaction("")
+    # except SecureBankException as b:
+        # args['error'] = b.message
     return render(request, 'SecureBank/funds_transfer.html', args)
 
 @login_required()
@@ -83,9 +86,3 @@ def profile(request):
     }
     return render(request, 'SecureBank/edit_profile.html', args)
 
-@login_required()
-def home_internal_user(request):
-    args = {
-        'user': request.user.username
-    }
-    return render(request, 'SecureBank/summary.html', args)#change "summary.html" accordingly for internal user

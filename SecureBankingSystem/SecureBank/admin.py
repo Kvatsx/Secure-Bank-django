@@ -8,3 +8,4 @@ from .models import *
 # Register your models here.
 
 admin.site.register(BankUser)
+admin.site.register(Account)
