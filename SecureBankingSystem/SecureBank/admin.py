@@ -9,3 +9,4 @@ from .models import *
 
 admin.site.register(BankUser)
 admin.site.register(Account)
+admin.site.register(Transaction)

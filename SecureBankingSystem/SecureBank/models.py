@@ -21,7 +21,7 @@ from django.db.models.signals import post_save
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import CASCADE
+from django.db.models import CASCADE, SET_NULL
 from pyotp import random_base32, TOTP, totp
 
 
@@ -80,6 +80,24 @@ class Account(models.Model):
         return self.AccountHolder.user.username + " " + str(self.AccountNumber) + " " + str(self.Balance)
 
 
-# class Transaction(models.Model):
-#     TODO: Need to create Transaction SQLite Table here
+class Transaction(models.Model):
+    DEBIT = 0
+    CREDIT = 1
+    STATUS = (
+        ('O', 'OTP'),
+        ('A', 'Internal User Approval required'),
+        ('P', 'Complete'),
+        ('R', 'Rejected by Internal User'),
+        ('E', 'Error occured during transaction'),
+    )
+    Employee = models.ForeignKey(BankUser, null=True, blank=True, on_delete=SET_NULL)
+    FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)
+    ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
+    Amount = models.IntegerField(default=0, editable=False)
+    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+
     # to, from , timestamp(object), amount, status(pending, accepted, rejected), UID,
+
+    def __str__(self):
+        return str(self.id) + " " + str(self.FromAccount.AccountNumber) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
+
