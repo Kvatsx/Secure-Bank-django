@@ -25,7 +25,7 @@ SECRET_KEY = 'tuubp$689au$c2ld66d40_apcq)qz8-x7^glk1ngdmhf+32+ko'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -100,6 +100,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER ='systemauthority007@gmail.com'
+EMAIL_HOST_PASSWORD = 'lblrwuqyfkzowqrx'
 
 
 # Internationalization

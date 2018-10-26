@@ -26,7 +26,7 @@ a.mdl-js-ripple-effect {
 }
 
 
-.profile-form, .fundtransfer-form{
+.profile-form, .fundtransfer-form, .transaction-auth-form{
 	display: flex;
 	flex-direction: column;
 	justify-content: center;

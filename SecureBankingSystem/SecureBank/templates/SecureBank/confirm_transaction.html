@@ -1,0 +1,21 @@
+{% extends 'SecureBank/userpage_base.html' %}
+
+
+{% block main_content %}
+ <div class="page-content">
+        <form action="#" method="post" id="transaction_auth" class="transaction-auth-form">
+            {% csrf_token %}
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="password" pattern="^[0-9]{6}" id="transaction_otp">
+                <label class="mdl-textfield__label" for="transaction_otp">OTP</label>
+                <span class="mdl-textfield__error">Enter a number</span>
+            </div>
+
+            <button type="submit" form="transaction_auth" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">
+            Submit
+            </button>
+        </form>
+    </div>
+
+{% endblock %}
