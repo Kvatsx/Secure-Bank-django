@@ -11,14 +11,15 @@
 
             <div class="mdl-tabs__panel is-active" id="edit_info">
                 <form action="#" method="post" id="edit_info_form" class="profile-form"> 
+                   {% csrf_token %}
                     <!-- <div class="profile-name"> -->
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" id="edit_info_firstname" pattern="(?=.{20,})[a-zA-z]+" placeholder="{{user}}" readonly>
                             <label class="mdl-textfield__label" for="edit_info_firstname">Name</label>
                             <span class="mdl-textfield__error">Required</span>
 
-                        </div>    
-<!-- 
+                        </div>
+<!--
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" id="edit_info_lastname" placeholder="{{user}}">
                             <label class="mdl-textfield__label" for="edit_info_lastname">Last Name</label>
@@ -28,18 +29,18 @@
                     <!-- </div> -->
 
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" placeholder="stored address">
-                        <textarea class="mdl-textfield__input is-invalid" type="text" rows= "3" maxrows="5" id="sample5"></textarea>
+                        <textarea class="mdl-textfield__input is-invalid" type="text" rows= "3" maxrows="5" id="edit_info_address"></textarea>
                         <!-- <input class="mdl-textfield__input" type="text" id="edit_info_mobile" pattern="^.{1,}$"> -->
                         <label class="mdl-textfield__label" for="edit_info_address">Address</label>
                         <span class="mdl-textfield__error">Required</span>
                     </div>
-                    
+
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" placeholder="user-mobile-99999">
                         <input class="mdl-textfield__input" type="text" id="edit_info_mobile" pattern="^[0-9]{10}$">
                         <label class="mdl-textfield__label" for="edit_info_mobile">Mobile Number</label>
                         <span class="mdl-textfield__error">Enter valid mobile number</span>
                     </div>
-                    <button type="submit" form="funds_transfer_form" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">
+                    <button type="submit" form="edit_info_form" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">
                     Submit
                     </button>
                 </form>
@@ -48,7 +49,8 @@
 
             <div class="mdl-tabs__panel" id="change_password">
 
-                <form action="#" method="post" id="change_password_form" class="profile-form"> 
+                <form action="#" method="post" id="change_password_form" class="profile-form">
+                   {% csrf_token %}
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="password" id="change_password_old" pattern="^(?!^$|\s+)">
                         <label class="mdl-textfield__label" for="change_password_old">Old Password</label>
