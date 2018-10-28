@@ -6,10 +6,10 @@
         <form action="#" method="post" id="funds_transfer_form" class="fundtransfer-form">  
            {% csrf_token %}
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
-                <input type="text" value="" class="mdl-textfield__input" id="funds_transfer_user_account" readonly>
-                <input type="hidden" value="" name="funds_transfer_user_account">
+                <input type="text" value="" class="mdl-textfield__input" id="funds_debit_user_account" readonly>
+                <input type="hidden" value="" name="funds_debit_user_account">
                 <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
-                <label class="mdl-textfield__label" for="funds_transfer_user_account">Account</label>
+                <label class="mdl-textfield__label" for="funds_debit_user_account">Account</label>
                 <ul for="funds_transfer_user_account" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
                     {% for account in accounts %}
                         <li class="mdl-menu__item" data-val="{{ account.AccountNumber }}">{{ account.AccountNumber }}</li>
@@ -19,16 +19,9 @@
                     {% endfor %}
                 </ul>
             </div>
-
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" name="funds_transfer_beneficiary_account" pattern="^[0-9]*$" id="funds_transfer_beneficiary_account">
-                <label class="mdl-textfield__label" for="funds_transfer_beneficiary_account">Beneficiary Account Number</label>
-                <span class="mdl-textfield__error">Enter a number</span>
-            </div>
-
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" name="funds_transfer_amount" pattern="^[1-9][0-9]*$" id="funds_transfer_amount">
-                <label class="mdl-textfield__label" for="funds_transfer_amount">Amount (INR)</label>
+                <input class="mdl-textfield__input" type="number" name="funds_debit_amount" pattern="^[1-9][0-9]*$" id="funds_debit_amount">
+                <label class="mdl-textfield__label" for="funds_debit_amount">Amount (INR)</label>
                 <span class="mdl-textfield__error">Enter integer number greater than 0</span>
             </div>
             <button type="submit" form="funds_transfer_form" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">

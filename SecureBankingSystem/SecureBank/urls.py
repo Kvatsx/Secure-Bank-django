@@ -9,9 +9,13 @@ urlpatterns = [
     url(r'^login/', views.login_user, name='login'),
     url(r'^logout/', views.logout_user, name='logout'),
     url(r'^staff/', views.home_internal_user, name='staff'),
-    url(r'^fundtransfer/', views.fundtransfer, name='fundtransfer'),
-    url(r'^profile/', views.profile, name='profile'),
-    url(r'^user/', views.home_external_user, name='user'),
-    url(r'^transaction_confirmation/', views.transaction_otp_confirmation, name='transaction_otp_confirmation'),
+    url(r'^fundtransfer/$', views.fundtransfer, name='fundtransfer'),
+    url(r'^fundcredit/$', views.fundcredit, name='fundcredit'),
+    url(r'^funddebit/$', views.funddebit, name='funddebit'),
+    url(r'^profile/$', views.profile, name='profile'),
+    url(r'^user/$', views.home_external_user, name='user'),
     url(r'^$', views.index, name='index'),
+
+    url(r'^transaction_confirmation/(?P<transaction_id>[0-9]+)/$', views.transaction_confirmation,
+        name='transaction_confirmation')
 ]

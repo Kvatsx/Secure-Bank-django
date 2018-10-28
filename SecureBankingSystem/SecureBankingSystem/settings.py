@@ -101,9 +101,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+NEXMO_API_KEY = '73b4b45b'
+NEXMO_API_SECRET = 'hTepo5V8dVoyE2Vt'
+NEXMO_DEFAULT_FROM = 'Utkarsh'
+
+EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER ='systemauthority007@gmail.com'
+EMAIL_HOST_USER = 'systemauthority007@gmail.com'
 EMAIL_HOST_PASSWORD = 'lblrwuqyfkzowqrx'
 
 

@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import CASCADE, SET_NULL
 from pyotp import random_base32, TOTP, totp
-from SecureBank.utils import SecureBankException
+from .utils import SecureBankException
 
 
 class BankUser(models.Model):
@@ -38,17 +38,24 @@ class BankUser(models.Model):
 
     # https://pyotp.readthedocs.io/en/latest/
     def generateOTP(self):
-        self.otp_value = random_base32()
+        self.otp_value = TOTP('base32secret3232',interval=120).now()
         self.save()
         subject = 'OTP From Secure Bank'
-        message =  "OTP: " + str(self.otp_value)
-        from_email = 'systemauthority007@gmail.com'
-        to = list(str(self.EmailID))
+        message = self.otp_value
+        from_email = 'systemadmin007@gmail.com'
+        print(self.EmailID)
+        to = [self.EmailID]
+        print(self.otp_value)
         send_mail(subject, message, from_email, to, fail_silently=False)
-        return totp.TOTP(self.otp_value).provisioning_uri(self.user.username, issuer_name="Secure Banking System")
+        return self.otp_value
+        # djexmo.send_message(frm='+919717384229', to='+918700543963', text='My sms')
+        # zerosms.sms(phno=username, passwd=password, receivernum=sendto, message=msg)
+
 
     def verifyOTP(self, otp):
-        pot = TOTP(self.otp_value)
+        pot = TOTP('base32secret3232',interval=120)
+        value = pot.verify(otp)
+        print('value',value)
         return pot.verify(otp)
 
 # class Payment(models.Model):
@@ -67,10 +74,26 @@ class Account(models.Model):
     def __str__(self):
         return self.AccountHolder.user.username + " " + str(self.AccountNumber) + " " + str(self.Balance)
 
+    def Credit(self,amount):
+        try:
+            self.Balance =self.Balance+int(amount)
+            self.save()
+        except:
+            raise SecureBankException('Invalid Amount')
+
+    def Debit(self,amount):
+        try:
+            if(amount <= 0):
+                raise SecureBankException("Invalid Amount")
+            if self.Balance < amount:
+                raise SecureBankException("Insufficient Funds")
+            self.Balance = self.Balance - int(amount)
+            self.save()
+        except:
+            raise SecureBankException('Not Debited!')
+
 
 class Transaction(models.Model):
-    DEBIT = 0
-    CREDIT = 1
     STATUS = (
         ('O', 'OTP'),
         ('A', 'Internal User Approval required'),
@@ -90,20 +113,81 @@ class Transaction(models.Model):
 
     @staticmethod
     def Create(user, fromAccountNumber, toAccountNumber, amount):
+        try:
+            amount = int(amount.strip())
+        except:
+            raise SecureBankException('Error in account number')
         if ( amount <= 0 ):
             raise SecureBankException('Negative Ammount')
-        tranaction = Transaction(FromAccount=fromAccountNumber, ToAccount=toAccountNumber, Amount=amount, Status='O', )
-        tranaction.save()
-        return tranaction
+        fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
+        if len(fromAccount) == 0:
+            raise SecureBankException("Account belongs to someone else")
+        fromAccount = fromAccount[0]
+        if fromAccount.AccountHolder.user.username != user.username:
+            raise SecureBankException("Trying to access someones else account")
+        if fromAccount.Balance < amount:
+            raise SecureBankException("Insufficient Funds")
+        toAccount = Account.objects.filter(AccountNumber=toAccountNumber)
+        if len(toAccount) == 0:
+            raise SecureBankException('Cannot send to this account')
+        toAccount = toAccount[0]
+        if fromAccount.AccountNumber == toAccount.AccountNumber:
+            raise SecureBankException("Cannot transfer to same account")
+        transaction = Transaction(FromAccount=fromAccount, ToAccount=toAccount, Amount=amount, Status='O')
+        print("Done")
+        transaction.save()
+        return transaction
+
+    @staticmethod
+    def CreateCredit(user,fromAccountNumber,amount ):
+        print("Do Credit Here")
+        try:
+            amount = int(amount.strip())
+        except:
+            raise SecureBankException('Error in account number')
+        if ( amount <= 0 ):
+            raise SecureBankException('Negative Ammount')
+        fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
+        if len(fromAccount) == 0:
+            raise SecureBankException("Account belongs to someone else")
+        fromAccount = fromAccount[0]
+        if fromAccount.AccountHolder.user.username != user.username:
+            raise SecureBankException("Trying to access someones else account")
+        fromAccount.Credit(amount)
+
+
+    @staticmethod
+    def CreateDebit(user, fromAccountNumber, amount):
+        print("Do Debit Here")
+        try:
+            amount = int(amount.strip())
+        except:
+            raise SecureBankException('Error in account number')
+        if ( amount <= 0 ):
+            raise SecureBankException('Negative Ammount')
+        fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
+        if len(fromAccount) == 0:
+            raise SecureBankException("Account belongs to someone else")
+        fromAccount = fromAccount[0]
+        if fromAccount.AccountHolder.user.username != user.username:
+            raise SecureBankException("Trying to access someones else account")
+        if fromAccount.Balance < amount:
+            raise SecureBankException("Insufficient Funds")
+        else:
+            fromAccount.Debit(amount)
 
     def verify_otp(self, otpvalue):
         try:
             otp = int(otpvalue)
         except:
-            raise SecureBankException('Invalid OTP')
+            raise SecureBankException('Invalid OTP Here')
         if not self.FromAccount.AccountHolder.verifyOTP(otp):
             raise SecureBankException('Invalid OTP')
-        self.STATUS = 'A'
+        if( self.Amount >1000):
+            self.STATUS = 'A'
+        else:
+            self.STATUS='P'
+        print(self.STATUS)
         self.save()
 
 

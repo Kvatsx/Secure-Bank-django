@@ -4,7 +4,7 @@
 {% block head %}
     <!--getmdl-select-->
     <link rel="stylesheet" href="{% static '/node_modules/getmdl-select/getmdl-select.min.css' %}">
-    <script defer src="{% static '/node_modules/getmdl-select/getmdl-select.min.js' %}""></script>
+    <script defer src="{% static '/node_modules/getmdl-select/getmdl-select.min.js' %}"></script>
 	<link rel="stylesheet" type="text/css" href="{% static 'SecureBank/userpage.css' %}">
     <title>Internal User</title>
 {% endblock %}
@@ -49,8 +49,8 @@
             <nav class="mdl-navigation">
                 <a id="user" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect" href="{% url 'user' %}">Account Summary</a>
                 <a id="passbook" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Passbook</a>
-                <a id="credit" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Credit</a>
-                <a id="debit" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="">Debit</a>
+                <a id="credit" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'fundcredit' %}">Credit</a>
+                <a id="debit" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'funddebit' %}">Debit</a>
                 <a id="fundtransfer" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'fundtransfer' %}">Funds Transfer</a>
                 <a id="profile" class="mdl-navigation__link mdl-js-button mdl-js-ripple-effect " href="{% url 'profile' %}">Edit Profile</a>
             </nav>
