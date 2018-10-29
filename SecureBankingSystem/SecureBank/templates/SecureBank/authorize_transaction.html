@@ -1,0 +1,39 @@
+{% extends 'SecureBank/manager_base.html' %}
+
+
+{% block main_content %}
+    <div class="page-content">
+        <form action="#" method="post" id="transaction_approve_form" class="fundtransfer-form">
+           {% csrf_token %}
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                <input type="text" value="" class="mdl-textfield__input" id="transaction" readonly>
+                <input type="hidden" value="" name="transaction">
+                <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                <label class="mdl-textfield__label" for="transaction">Transations To approve</label>
+                <ul for="transaction" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                    {% for transaction in transactions %}
+                        <li class="mdl-menu__item" data-val="Transaction: {{ transaction.id }} From:{{ transaction.FromAccount.AccountNumber }} To: {{ transaction.ToAccount.AccountNumber }} Amount: {{ transaction.Amount }}">Transaction: {{ transaction.id }} From:{{ transaction.FromAccount.AccountNumber }} To: {{ transaction.ToAccount.AccountNumber }} Amount: {{ transaction.Amount }}</li>
+                    <!--<li class="mdl-menu__item" data-val="Account 1" data-selected="true">Account 1</li>-->
+                    <!--<li class="mdl-menu__item" data-val="Account 2">Account 2</li>-->
+                    <!--<li class="mdl-menu__item" data-val="Account 3">Account 3</li>-->
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+                <input type="text" value="" class="mdl-textfield__input" id="transaction__approve_options" readonly>
+                <input type="hidden" value="" name="transaction__approve_options">
+                <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                <label class="mdl-textfield__label" for="transaction__approve_options">Options</label>
+                <ul for="transaction__approve_options" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                   <li class="mdl-menu__item" data-val="Approve" data-selected="true">Approve</li>
+                    <li class="mdl-menu__item" data-val="Reject">Reject</li>
+                </ul>
+            </div>
+
+            <button type="submit" form="transaction_approve_form" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">
+            Submit
+            </button>
+        </form>
+    </div>
+{% endblock %}

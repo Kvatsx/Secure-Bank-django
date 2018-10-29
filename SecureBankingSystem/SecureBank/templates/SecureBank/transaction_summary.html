@@ -1,0 +1,29 @@
+{% extends 'SecureBank/manager_base.html' %}
+
+
+{% block main_content %}
+    <div class="page-content mdl-grid">
+
+    	<div class = "summary-balance mdl-cell mdl-grid">
+    		<table class="summary-accounts mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+				<thead>
+					<tr>
+						<th>Transaction Number</th>
+						<th>From Account</th>
+                        <th>To Account</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+					</tr>
+				</thead>
+				<tbody clas="summary-accounts-body">
+				{% for transaction in transactions %}
+                    <tr><td>{{ transaction.id }}</td><td>{{ transaction.FromAccount.AccountNumber }}</td><td>{{ transaction.ToAccount.AccountNumber }}</td><td>{{ transaction.Amount }}</td><td>{{ transaction.Status }}</td></tr>
+				{% endfor %}
+				</tbody>
+			</table>
+    	</div>
+
+
+    	
+    </div>
+{% endblock %}

@@ -48,7 +48,7 @@ def login_user(request):
         if user is not None and result['success']:
             login(request, user)
             if (user.is_staff):
-                return redirect('user') #change "user" accordingly for internal user
+                return redirect('manager') #change "user" accordingly for internal user
             else:
                 return redirect('user')
             messages.success(request, 'New comment added with success!')
@@ -180,9 +180,33 @@ def home_external_user(request):
 
 
 @login_required()
+#@permission_required('BankUser.is_Manager')
 def home_internal_user(request):
     args = {
-        'user': request.user.username
+        'user': request.user.username,
+        'transactions': Transaction.objects.all()
     }
-    return render(request, 'SecureBank/summary.html', args) #change "summary.html" accordingly for internal user
+    print('trasaction',args['transactions'])
+    return render(request, 'SecureBank/transaction_summary.html', args) #change "summary.html" accordingly for internal user
+
+@login_required()
+#@permission_required('BankUser.is_Manager')
+def authorize_transaction(request):
+    args = {
+        'user': request.user.username,
+        'transactions': ''
+    }
+    try:
+        args['transactions']=Transaction.objects.filter(Status='A')
+    except:
+        args['transactions']=None
+    print(args['transactions'])
+    if request.method != 'POST':
+        return render(request, 'SecureBank/authorize_transaction.html',args)  # change "summary.html" accordingly for internal user
+
+    transaction = get_value(request.POST, 'transaction')
+    optionSelected = get_value(request.POST, 'transaction__approve_options')
+    print('option',optionSelected)
+    print('transaction',transaction)
+    return render(request, 'SecureBank/authorize_transaction.html', args)  # change "summary.html" accordingly for internal user
 

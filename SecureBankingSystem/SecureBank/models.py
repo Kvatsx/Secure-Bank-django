@@ -13,6 +13,7 @@ class BankUser(models.Model):
         permissions = (
             ("is_External_User", "Customer of bank"),
             ("is_Internal_User", "Employee has permissions to access User data"),
+            ("is_Manager", "Manager has permission to access transactions")
         )
 
     TYPES = (
@@ -94,6 +95,7 @@ class Account(models.Model):
 
 
 class Transaction(models.Model):
+
     STATUS = (
         ('O', 'OTP'),
         ('A', 'Internal User Approval required'),
@@ -101,15 +103,27 @@ class Transaction(models.Model):
         ('R', 'Rejected by Internal User'),
         ('E', 'Error occured during transaction'),
     )
+
+    TYPE = (
+        ('C', 'Credit'),
+        ('D', 'Debit'),
+        ('T', 'Transaction'),
+    )
     Employee = models.ForeignKey(BankUser, null=True, blank=True, on_delete=SET_NULL)
     FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)
     ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
     Amount = models.IntegerField(default=0, editable=False)
     Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+    Type = models.CharField(max_length=1,default='T',choices=TYPE,editable=False)
     CreationTime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.id) + " " + str(self.FromAccount.AccountNumber) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
+        if self.Type == 'T':
+            return str(self.id) + " " + str(self.FromAccount.AccountNumber) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
+        elif self.Type == 'D':
+            return str(self.id) + " " + str(self.FromAccount.AccountNumber) + " " + str(self.Amount)
+        else:
+            return str(self.id) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
 
     @staticmethod
     def Create(user, fromAccountNumber, toAccountNumber, amount):
@@ -133,7 +147,7 @@ class Transaction(models.Model):
         toAccount = toAccount[0]
         if fromAccount.AccountNumber == toAccount.AccountNumber:
             raise SecureBankException("Cannot transfer to same account")
-        transaction = Transaction(FromAccount=fromAccount, ToAccount=toAccount, Amount=amount, Status='O')
+        transaction = Transaction(FromAccount=fromAccount, ToAccount=toAccount, Amount=amount, Status='O', Type='T')
         print("Done")
         transaction.save()
         return transaction
@@ -153,7 +167,9 @@ class Transaction(models.Model):
         fromAccount = fromAccount[0]
         if fromAccount.AccountHolder.user.username != user.username:
             raise SecureBankException("Trying to access someones else account")
+        transaction = Transaction(FromAccount=None, ToAccount=fromAccount, Amount=amount, Status='P', Type='C')
         fromAccount.Credit(amount)
+        transaction.save()
 
 
     @staticmethod
@@ -173,21 +189,32 @@ class Transaction(models.Model):
             raise SecureBankException("Trying to access someones else account")
         if fromAccount.Balance < amount:
             raise SecureBankException("Insufficient Funds")
+        if amount > 1000:
+            transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='A', Type='D')
         else:
+            transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='P', Type='D')
             fromAccount.Debit(amount)
+        transaction.save()
+        return transaction
 
     def verify_otp(self, otpvalue):
         try:
             otp = int(otpvalue)
         except:
+            self.Status = 'E'
+            self.save
             raise SecureBankException('Invalid OTP Here')
+
         if not self.FromAccount.AccountHolder.verifyOTP(otp):
+            self.Status = 'E'
+            self.save
             raise SecureBankException('Invalid OTP')
-        if( self.Amount >1000):
-            self.STATUS = 'A'
+
+        if( self.Amount > 1000):
+            self.Status = 'A'
         else:
-            self.STATUS='P'
-        print(self.STATUS)
+            self.Status='P'
+        print(self.Status)
         self.save()
 
 
