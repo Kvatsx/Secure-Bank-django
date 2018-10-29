@@ -217,4 +217,18 @@ class Transaction(models.Model):
         print(self.Status)
         self.save()
 
+    def approve_transaction(self):
+        print("Approve")
+        if(self.ToAccount == None):
+            self.FromAccount.Debit(self.Amount)
+        else:
+            self.FromAccount.Debit(self.Amount)
+            self.ToAccount.Debit(self.Amount)
+        self.Status = "P"
+        return self.Status
+
+    def reject_transaction(self):
+        print("Reject Transaction")
+        self.Status = 'R'
+        return self.Status
 

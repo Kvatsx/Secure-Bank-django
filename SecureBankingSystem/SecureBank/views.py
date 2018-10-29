@@ -204,9 +204,27 @@ def authorize_transaction(request):
     if request.method != 'POST':
         return render(request, 'SecureBank/authorize_transaction.html',args)  # change "summary.html" accordingly for internal user
 
-    transaction = get_value(request.POST, 'transaction')
+    transaction_id = get_value(request.POST, 'transaction')
     optionSelected = get_value(request.POST, 'transaction__approve_options')
-    print('option',optionSelected)
-    print('transaction',transaction)
+    print('option', optionSelected)
+
+    try:
+        transaction = Transaction.objects.filter(id=transaction_id)
+    except:
+        args['error'] = 'Error in Transaction request!!'
+        return render(request, 'SecureBank/authorize_transaction.html', args)
+
+    if not len(transaction) == 0:
+        transaction = transaction[0]
+        print('transaction', transaction)
+        if optionSelected == "Approve":
+            status = transaction.approve_transaction()
+            print("Status",status)
+        elif optionSelected == "Reject":
+            status = transaction.reject_transaction()
+            print("Status", status)
+        else:
+            args['error']="Wrong Option!!"
+        return redirect('manager')
     return render(request, 'SecureBank/authorize_transaction.html', args)  # change "summary.html" accordingly for internal user
 

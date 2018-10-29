@@ -12,7 +12,7 @@
                 <label class="mdl-textfield__label" for="transaction">Transations To approve</label>
                 <ul for="transaction" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
                     {% for transaction in transactions %}
-                        <li class="mdl-menu__item" data-val="Transaction: {{ transaction.id }} From:{{ transaction.FromAccount.AccountNumber }} To: {{ transaction.ToAccount.AccountNumber }} Amount: {{ transaction.Amount }}">Transaction: {{ transaction.id }} From:{{ transaction.FromAccount.AccountNumber }} To: {{ transaction.ToAccount.AccountNumber }} Amount: {{ transaction.Amount }}</li>
+                        <li class="mdl-menu__item" data-val="{{ transaction.id }}">Transaction: {{ transaction.id }} From:{{ transaction.FromAccount.AccountNumber }} To: {{ transaction.ToAccount.AccountNumber }} Amount: {{ transaction.Amount }}</li>
                     <!--<li class="mdl-menu__item" data-val="Account 1" data-selected="true">Account 1</li>-->
                     <!--<li class="mdl-menu__item" data-val="Account 2">Account 2</li>-->
                     <!--<li class="mdl-menu__item" data-val="Account 3">Account 3</li>-->
