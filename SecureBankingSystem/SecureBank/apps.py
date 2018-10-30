@@ -6,3 +6,6 @@ from django.apps import AppConfig
 
 class BankingsystemConfig(AppConfig):
     name = 'SecureBank'
+
+    def ready(self):
+        import SecureBank.signals

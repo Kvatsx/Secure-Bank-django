@@ -11,6 +11,7 @@ from django.contrib.auth.models import AbstractUser
 
 BITS = 1024
 
+
 class BankUser(models.Model):
     class Meta:
         permissions = (
@@ -33,6 +34,7 @@ class BankUser(models.Model):
     address = models.CharField(max_length=250)
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
+
     # private_key = models.CharField()
     # public_key = models.CharField()
     # ListCharField (Internal User, Account access for Internal user). https://django-mysql.readthedocs.io/en/latest/model_fields/list_fields.html
@@ -40,7 +42,7 @@ class BankUser(models.Model):
     # TODO: Need to add OTP creation time (for validity of OTP)
 
     def __str__(self):
-        return self.user.username +" "+ self.type_of_user
+        return self.user.username + " " + self.type_of_user
 
     def generateCerti(self):
         newKey = RSA.generate(BITS)
@@ -50,7 +52,7 @@ class BankUser(models.Model):
 
     # https://pyotp.readthedocs.io/en/latest/
     def generateOTP(self):
-        self.otp_value = TOTP('base32secret3232',interval=120).now()
+        self.otp_value = TOTP('base32secret3232', interval=120).now()
         self.save()
         subject = 'OTP From Secure Bank'
         message = self.otp_value
@@ -63,22 +65,21 @@ class BankUser(models.Model):
         # djexmo.send_message(frm='+919717384229', to='+918700543963', text='My sms')
         # zerosms.sms(phno=username, passwd=password, receivernum=sendto, message=msg)
 
-
     def verifyOTP(self, otp):
-        pot = TOTP('base32secret3232',interval=120)
+        pot = TOTP('base32secret3232', interval=120)
         value = pot.verify(otp)
-        print('value',value)
+        print('value', value)
         return pot.verify(otp)
+
 
 # class Payment(models.Model):
 #     # TODO: Need to create Payment SQLite Table here
 #     organization = models.ForeignKey(BankUser, related_name="merchant", null=True)
 #     user = models.ForeignKey(Account, related_name='user', null=True)
 #     transaction = models.ForeignKey(Transaction, related_name='transaction')
-    #
+#
 
 class Account(models.Model):
-
     AccountNumber = models.IntegerField(primary_key=True, unique=True)
     AccountHolder = models.ForeignKey(BankUser, null=True, on_delete=True)
     Balance = models.IntegerField(default=0, editable=True)
@@ -86,16 +87,16 @@ class Account(models.Model):
     def __str__(self):
         return self.AccountHolder.user.username + " " + str(self.AccountNumber) + " " + str(self.Balance)
 
-    def Credit(self,amount):
+    def Credit(self, amount):
         try:
-            self.Balance =self.Balance+int(amount)
+            self.Balance = self.Balance + int(amount)
             self.save()
         except:
             raise SecureBankException('Invalid Amount')
 
-    def Debit(self,amount):
+    def Debit(self, amount):
         try:
-            if(amount <= 0):
+            if (amount <= 0):
                 raise SecureBankException("Invalid Amount")
             if self.Balance < amount:
                 raise SecureBankException("Insufficient Funds")
@@ -106,7 +107,6 @@ class Account(models.Model):
 
 
 class Transaction(models.Model):
-
     STATUS = (
         ('O', 'OTP'),
         ('A', 'Internal User Approval required'),
@@ -125,12 +125,13 @@ class Transaction(models.Model):
     ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
     Amount = models.IntegerField(default=0, editable=False)
     Status = models.CharField(max_length=1, choices=STATUS)
-    Type = models.CharField(max_length=1,default='T',choices=TYPE,editable=False)
+    Type = models.CharField(max_length=1, default='T', choices=TYPE, editable=False)
     CreationTime = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
         if self.Type == 'T':
-            return str(self.id) + " " + str(self.FromAccount.AccountNumber) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
+            return str(self.id) + " " + str(self.FromAccount.AccountNumber) + " " + str(
+                self.ToAccount.AccountNumber) + " " + str(self.Amount)
         elif self.Type == 'D':
             return str(self.id) + " " + str(self.FromAccount.AccountNumber) + " " + str(self.Amount)
         else:
@@ -142,7 +143,7 @@ class Transaction(models.Model):
             amount = int(amount.strip())
         except:
             raise SecureBankException('Error in account number')
-        if ( amount <= 0 ):
+        if (amount <= 0):
             raise SecureBankException('Negative Ammount')
         fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
         if len(fromAccount) == 0:
@@ -164,13 +165,13 @@ class Transaction(models.Model):
         return transaction
 
     @staticmethod
-    def CreateCredit(user,fromAccountNumber,amount ):
+    def CreateCredit(user, fromAccountNumber, amount):
         print("Do Credit Here")
         try:
             amount = int(amount.strip())
         except:
             raise SecureBankException('Error in account number')
-        if ( amount <= 0 ):
+        if (amount <= 0):
             raise SecureBankException('Negative Ammount')
         fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
         if len(fromAccount) == 0:
@@ -182,7 +183,6 @@ class Transaction(models.Model):
         fromAccount.Credit(amount)
         transaction.save()
 
-
     @staticmethod
     def CreateDebit(user, fromAccountNumber, amount):
         print("Do Debit Here")
@@ -190,7 +190,7 @@ class Transaction(models.Model):
             amount = int(amount.strip())
         except:
             raise SecureBankException('Error in account number')
-        if ( amount <= 0 ):
+        if (amount <= 0):
             raise SecureBankException('Negative Ammount')
         fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
         if len(fromAccount) == 0:
@@ -221,16 +221,16 @@ class Transaction(models.Model):
             self.save
             raise SecureBankException('Invalid OTP')
 
-        if( self.Amount > 1000):
+        if (self.Amount > 1000):
             self.Status = 'A'
         else:
-            self.Status='P'
+            self.Status = 'P'
         print(self.Status)
         self.save()
 
     def approve_transaction(self):
         print("Approve")
-        if(self.ToAccount == None):
+        if (self.ToAccount == None):
             self.FromAccount.Debit(self.Amount)
         else:
             self.FromAccount.Debit(self.Amount)
@@ -243,3 +243,10 @@ class Transaction(models.Model):
         self.Status = 'R'
         return self.Status
 
+
+class LoggedInUser(models.Model):
+    user = models.OneToOneField(User, related_name='logged_in_user', on_delete=SET_NULL, null=True)
+    session_key = models.CharField(max_length=32, null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
