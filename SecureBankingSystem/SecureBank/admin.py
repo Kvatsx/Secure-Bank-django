@@ -18,41 +18,59 @@ class TransactionAdmin(admin.ModelAdmin):
     actions = ['approve', 'reject']
 
     def approve(self, request, queryset):
-        if not request.user.get_profile().type_of_user == 'S':
+        selected = len(queryset)
+        if not request.user.bankuser.type_of_user == 'S':
             queryset = queryset.filter(Amount__lte = BankUser.MAX_REGULAR_EMPLOYEE)
+        rows_filtered = len(queryset)
         rows_updated = 0
+        rows_problem = 0
         for obj in queryset:
             if obj.Status=='A':
                 try:
                     obj.approve_transaction()
                     rows_updated+=1
                 except:
+                    rows_problem+=1
                     print("error occured for transaction ", obj)
                     # mark the transaction as error
         if rows_updated == 1:
             message_bit = "1 Transaction was"
         else:
             message_bit = "%s Transactions were" % rows_updated
-        self.message_user(request, "%s Approved" % message_bit)
+        msg = "{} Approved".format(message_bit)
+        if rows_problem > 0:
+            msg = msg + "{} could not Approve".format(rows_problem)
+        if selected-rows_filtered > 0:
+            msg = msg + " {} Ignored. Permission Required for Amount greater than {}".format(selected-rows_filtered, BankUser.MAX_REGULAR_EMPLOYEE)
+        self.message_user(request, msg)
     approve.short_description = "Approve selected transactions"
 
     def reject(self, request, queryset):
-        if not request.user.type_of_user == 'S':
+        selected = len(queryset)
+        if not request.user.bankuser.type_of_user == 'S':
             queryset = queryset.filter(Amount__lte = BankUser.MAX_REGULAR_EMPLOYEE)  
+        rows_filtered = len(queryset)
         rows_updated = 0
+        rows_problem = 0
         for obj in queryset:
             if obj.Status=='R':
                 try:
                     obj.reject_transaction()
                     rows_updated+=1
                 except:
+                    rows_problem+=1
                     print("error occured for transaction ", obj)
                     # mark the transaction as error
         if rows_updated == 1:
             message_bit = "1 Transaction was"
         else:
             message_bit = "%s Transactions were" % rows_updated
-        self.message_user(request, "%s Rejected" % message_bit)
+        msg = "{} Rejected.".format(message_bit)
+        if rows_problem > 0:
+            msg = msg + " {} could not Reject.".format(rows_problem)
+        if selected-rows_filtered > 0:
+            msg = msg + " {} Ignored. Permission Required for Amount greater than {}".format(selected-rows_filtered, BankUser.MAX_REGULAR_EMPLOYEE)
+        self.message_user(request, msg)
     reject.short_description = "Reject selected transactions"
 
 
