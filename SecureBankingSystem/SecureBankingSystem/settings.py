@@ -31,24 +31,34 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'SecureBank',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'SecureBank.apps.BankingsystemConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'SecureBank.middleware.OneSessionPerUserMiddleware',
+    'SecureBank.middleware.AutoLogout',
 ]
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+# SESSION_EXPIRE_SECONDS = 1*60   # 1 Minutes Session Timeout
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AUTO_LOGOUT_DELAY = 1   # 1 Minute Session Timeout
 
 ROOT_URLCONF = 'SecureBankingSystem.urls'
 
@@ -111,6 +121,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'systemauthority007@gmail.com'
 EMAIL_HOST_PASSWORD = 'lblrwuqyfkzowqrx'
 
+SERVER_EMAIL = 'kaustav16048@iiitd.ac.in'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -130,6 +141,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+LOGIN_URL = '/SecureBank/'
 
 LOGIN_REDIRECT_URL = '/SecureBank/'
 

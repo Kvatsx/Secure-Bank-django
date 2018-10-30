@@ -1,4 +1,3 @@
-from django.http import HttpResponseRedirect
 
 def get_value(request, param):
     if param in request:
