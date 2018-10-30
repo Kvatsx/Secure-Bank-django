@@ -52,7 +52,7 @@ def login_user(request):
         if user is not None and result['success']:
             login(request, user)
             if (user.is_staff):
-                return redirect('manager') #change "user" accordingly for internal user
+                return redirect('/admin') #change "user" accordingly for internal user
             else:
                 return redirect('user')
             messages.success(request, 'New comment added with success!')
@@ -229,6 +229,6 @@ def authorize_transaction(request):
             print("Status", status)
         else:
             args['error']="Wrong Option!!"
-        return redirect('manager')
+        return redirect('/admin')
     return render(request, 'SecureBank/authorize_transaction.html', args)  # change "summary.html" accordingly for internal user
 

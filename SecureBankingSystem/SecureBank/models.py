@@ -9,10 +9,9 @@ from .utils import SecureBankException
 # from crypto.publickey import RSA
 from django.contrib.auth.models import AbstractUser
 
-BITS = 1024
-
-
 class BankUser(models.Model):
+    MAX_REGULAR_EMPLOYEE = 1000
+    BITS = 1024
     class Meta:
         permissions = (
             ("is_External_User", "Customer of bank"),
@@ -124,8 +123,8 @@ class Transaction(models.Model):
     FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)
     ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
     Amount = models.IntegerField(default=0, editable=False)
-    Status = models.CharField(max_length=1, choices=STATUS)
-    Type = models.CharField(max_length=1, default='T', choices=TYPE, editable=False)
+    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+    Type = models.CharField(max_length=1,default='T',choices=TYPE,editable=False)
     CreationTime = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
@@ -200,7 +199,7 @@ class Transaction(models.Model):
             raise SecureBankException("Trying to access someones else account")
         if fromAccount.Balance < amount:
             raise SecureBankException("Insufficient Funds")
-        if amount > 1000:
+        if amount > MAX_REGULAR_EMPLOYEE:
             transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='A', Type='D')
         else:
             transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='P', Type='D')
@@ -221,7 +220,7 @@ class Transaction(models.Model):
             self.save
             raise SecureBankException('Invalid OTP')
 
-        if (self.Amount > 1000):
+        if( self.Amount > MAX_REGULAR_EMPLOYEE):
             self.Status = 'A'
         else:
             self.Status = 'P'
@@ -236,11 +235,19 @@ class Transaction(models.Model):
             self.FromAccount.Debit(self.Amount)
             self.ToAccount.Debit(self.Amount)
         self.Status = "P"
+        self.save()
         return self.Status
 
     def reject_transaction(self):
         print("Reject Transaction")
         self.Status = 'R'
+        self.save()
+        return self.Status
+
+    def mark_error(self):
+        print("Error transaction")
+        self.Status = 'E'
+        self.save()
         return self.Status
 
 
