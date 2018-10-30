@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.urls import reverse
 
 from .utils import get_value, SecureBankException
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from .models import Transaction
 
@@ -65,7 +65,7 @@ def login_user(request):
 def logout_user(request):
     # if request.method == 'POST':
     logout(request)
-    return redirect('login')
+    return HttpResponseRedirect('login')
     #else:
     #return HttpResponse('click on button first to logout')
 
