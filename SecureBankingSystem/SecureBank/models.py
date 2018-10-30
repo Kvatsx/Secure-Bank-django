@@ -12,12 +12,12 @@ from django.contrib.auth.models import AbstractUser
 class BankUser(models.Model):
     MAX_REGULAR_EMPLOYEE = 1000
     BITS = 1024
-    class Meta:
-        permissions = (
-            ("is_External_User", "Customer of bank"),
-            ("is_Internal_User", "Employee has permissions to access User data"),
-            ("is_Manager", "Manager has permission to access transactions")
-        )
+    # class Meta:
+    #     permissions = (
+    #         ("is_External_User", "Customer of bank"),
+    #         ("is_Internal_User", "Employee has permissions to access User data"),
+    #         ("is_Manager", "Manager has permission to access transactions")
+    #     )
 
     TYPES = (
         ('R', 'Regular Employee'),
@@ -84,7 +84,8 @@ class Account(models.Model):
     Balance = models.IntegerField(default=0, editable=True)
 
     def __str__(self):
-        return self.AccountHolder.user.username + " " + str(self.AccountNumber) + " " + str(self.Balance)
+        return str(self.AccountNumber)
+        # return self.AccountHolder.user.username + " " + str(self.AccountNumber) + " " + str(self.Balance)
 
     def Credit(self, amount):
         try:
@@ -107,17 +108,17 @@ class Account(models.Model):
 
 class Transaction(models.Model):
     STATUS = (
-        ('O', 'OTP'),
-        ('A', 'Internal User Approval required'),
-        ('P', 'Complete'),
-        ('R', 'Rejected by Internal User'),
-        ('E', 'Error occured during transaction'),
+        ('O', 'OTP required'),
+        ('A', 'Approval required'),
+        ('P', 'Processed'),
+        ('R', 'Rejected'),
+        ('E', 'Unsuccessful'),
     )
 
     TYPE = (
         ('C', 'Credit'),
         ('D', 'Debit'),
-        ('T', 'Transaction'),
+        ('T', 'Transfer'),
     )
     Employee = models.ForeignKey(BankUser, null=True, blank=True, on_delete=SET_NULL)
     FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)

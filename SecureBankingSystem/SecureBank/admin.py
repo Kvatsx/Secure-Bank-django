@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 from .models import *
 
 
-admin.site.disable_action('delete_selected')
+# admin.site.disable_action('delete_selected')
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount')
     list_filter = ('Status','CreationTime', 'FromAccount', 'ToAccount')
-    fields = ['Status']
+    fields = []
     actions = ['approve', 'reject']
 
     def approve(self, request, queryset):
@@ -44,7 +46,7 @@ class TransactionAdmin(admin.ModelAdmin):
             msg = msg + " {} Ignored. Permission Required for Amount greater than {}".format(selected-rows_filtered, BankUser.MAX_REGULAR_EMPLOYEE)
         self.message_user(request, msg)
     approve.short_description = "Approve selected transactions"
-
+    
     def reject(self, request, queryset):
         selected = len(queryset)
         if not request.user.bankuser.type_of_user == 'S':
@@ -73,15 +75,35 @@ class TransactionAdmin(admin.ModelAdmin):
         self.message_user(request, msg)
     reject.short_description = "Reject selected transactions"
 
+class BankUserForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super(BankUserForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['email'].required = True
 
 
+class BankUserInlineFormset(forms.models.BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super(BankUserInlineFormset, self).__init__(*args, **kwargs)
+        self.forms[0].empty_permitted = False
 
 class BankUserInline(admin.StackedInline):
     model = BankUser
+    fields = ['phone', 'type_of_user']
+    formset = BankUserInlineFormset
     can_delete = False
     verbose_name_plural = 'bankuser'
 
 class UserAdmin(BaseUserAdmin):
+    form = BankUserForm
+    add_form = BankUserForm
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')}
+        ),
+    )
+
     inlines = (BankUserInline, )
     list_display = ('username', 'first_name', 'last_name', 'email', 'get_phone', 'get_address', 'get_type', 'is_staff')
     # fields = ['username', 'first_name', 'last_name', 'email', 'get_phone', 'get_address', 'get_type', 'is_staff']
