@@ -15,6 +15,7 @@ from .utils import get_value, SecureBankException
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from .models import Transaction
+from .decorators import external_user_required, internal_user_required
 
 # Create your views here.
 # @login_required()
@@ -62,6 +63,7 @@ def login_user(request):
         return render(request, 'SecureBank/login.html', args)
 
 @login_required()
+@external_user_required()
 def logout_user(request):
     # if request.method == 'POST':
     logout(request)
@@ -71,6 +73,7 @@ def logout_user(request):
 
 
 @login_required()
+@external_user_required()
 def fundtransfer(request):
     args = {
         'user': request.user.username,
@@ -94,6 +97,7 @@ def fundtransfer(request):
     return redirect("transaction_confirmation", transaction_id=transaction.id)
 
 @login_required()
+@external_user_required()
 def fundcredit(request):
     args = {
         'user': request.user.username,
@@ -115,6 +119,7 @@ def fundcredit(request):
     return redirect("user")
 
 @login_required()
+@external_user_required()
 def funddebit(request):
     args = {
         'user': request.user.username,
@@ -137,6 +142,7 @@ def funddebit(request):
 
 
 @login_required
+@external_user_required()
 def transaction_confirmation(request, transaction_id):
     transaction = Transaction.objects.get(pk=transaction_id)
     args = {
@@ -160,6 +166,7 @@ def transaction_confirmation(request, transaction_id):
 
 
 @login_required()
+@external_user_required()
 def profile(request):
     args = {
         'user': request.user.username
@@ -168,6 +175,7 @@ def profile(request):
 
 
 @login_required()
+@external_user_required()
 def home_external_user(request):
     args = {
         'user': request.user.username,
@@ -185,6 +193,7 @@ def home_external_user(request):
 
 @login_required()
 #@permission_required('BankUser.is_Manager')
+@internal_user_required()
 def home_internal_user(request):
     args = {
         'user': request.user.username,
@@ -194,7 +203,7 @@ def home_internal_user(request):
     return render(request, 'SecureBank/transaction_summary.html', args) #change "summary.html" accordingly for internal user
 
 @login_required()
-#@permission_required('BankUser.is_Manager')
+@internal_user_required()
 def authorize_transaction(request):
     args = {
         'user': request.user.username,
