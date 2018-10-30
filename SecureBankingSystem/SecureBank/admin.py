@@ -12,11 +12,23 @@ from .models import *
 
 # admin.site.disable_action('delete_selected')
 
+# class TransactionForm(UserChangeForm):
+#     def __init__(self, *args, **kwargs):
+#         super(BankUserForm, self).__init__(*args, **kwargs)
+#         self.fields['first_name'].required = True
+#         self.fields['email'].required = True
+
+
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount')
     list_filter = ('Status','CreationTime', 'FromAccount', 'ToAccount')
-    fields = []
+    fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ()}
+        ),
+    )
     actions = ['approve', 'reject']
 
     def approve(self, request, queryset):
