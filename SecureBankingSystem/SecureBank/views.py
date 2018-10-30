@@ -25,7 +25,7 @@ def index(request):
 def login_user(request):
     if request.user.is_authenticated:
         if (request.user.is_staff):
-            return redirect('manager')  # change "user" accordingly for internal user
+            return redirect('/admin')  # change "user" accordingly for internal user
         else:
             return redirect('user')
     args = {
