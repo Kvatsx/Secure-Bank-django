@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import url, include
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^SecureBank/', include('SecureBank.urls')),
+    url(r'^.*$', RedirectView.as_view(url='SecureBank/', permanent=True)),
 ]

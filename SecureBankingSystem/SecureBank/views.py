@@ -22,7 +22,11 @@ def index(request):
     return redirect('login')
 
 def login_user(request):
-
+    if request.user.is_authenticated:
+        if (request.user.is_staff):
+            return redirect('manager')  # change "user" accordingly for internal user
+        else:
+            return redirect('user')
     args = {
         'wrong_credentials' : False
     }

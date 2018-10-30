@@ -6,7 +6,10 @@ from django.contrib.auth.models import User
 from django.db.models import CASCADE, SET_NULL
 from pyotp import random_base32, TOTP, totp
 from .utils import SecureBankException
+# from crypto.publickey import RSA
+from django.contrib.auth.models import AbstractUser
 
+BITS = 1024
 
 class BankUser(models.Model):
     class Meta:
@@ -30,12 +33,20 @@ class BankUser(models.Model):
     address = models.CharField(max_length=250)
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
+    # private_key = models.CharField()
+    # public_key = models.CharField()
     # ListCharField (Internal User, Account access for Internal user). https://django-mysql.readthedocs.io/en/latest/model_fields/list_fields.html
 
     # TODO: Need to add OTP creation time (for validity of OTP)
 
     def __str__(self):
         return self.user.username +" "+ self.type_of_user
+
+    def generateCerti(self):
+        newKey = RSA.generate(BITS)
+        self.public_key = newKey.publickey().exportKey("PEM")
+        self.private_key = newKey.exportKey("PEM")
+        # sendMail(self.public_key)
 
     # https://pyotp.readthedocs.io/en/latest/
     def generateOTP(self):
@@ -113,9 +124,9 @@ class Transaction(models.Model):
     FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)
     ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
     Amount = models.IntegerField(default=0, editable=False)
-    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+    Status = models.CharField(max_length=1, choices=STATUS)
     Type = models.CharField(max_length=1,default='T',choices=TYPE,editable=False)
-    CreationTime = models.DateTimeField(auto_now_add=True)
+    CreationTime = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
         if self.Type == 'T':
