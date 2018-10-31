@@ -149,8 +149,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-LOGIN_URL = '/SecureBank/'
+LOGIN_URL = '/SecureBank/login/'
 
-LOGIN_REDIRECT_URL = '/SecureBank/'
+LOGIN_REDIRECT_URL = '/SecureBank/login/'
 
 GOOGLE_RECAPTCHA_SECRET_KEY = '6LeXc3UUAAAAAL1K0SkzMHuXuipnCYvhpLBYA53Q'

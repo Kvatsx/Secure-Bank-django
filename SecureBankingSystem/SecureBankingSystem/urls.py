@@ -14,11 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
 
+admin.autodiscover()
+admin.site.login = login_required(admin.site.login)
+
 urlpatterns = [
+    # url(r'^admin/login$', RedirectView.as_view(pattern_name='login_user', permanent=True, query_string=True)),
     url(r'^admin/', admin.site.urls),
     url(r'^SecureBank/', include('SecureBank.urls')),
-    # url(r'^.*$', RedirectView.as_view(url='SecureBank/', permanent=True)),
+    url(r'^.*$', RedirectView.as_view(url='SecureBank/', permanent=True)),
 ]

@@ -25,7 +25,7 @@ def index(request):
 def login_user(request):
     if request.user.is_authenticated:
         if (request.user.is_staff):
-            return redirect('/admin')  # change "user" accordingly for internal user
+            return redirect('/admin/')  # change "user" accordingly for internal user
         else:
             return redirect('user')
     args = {
@@ -54,7 +54,7 @@ def login_user(request):
         if user is not None and result['success']:
             login(request, user)
             if (user.is_staff):
-                return redirect('/admin') #change "user" accordingly for internal user
+                return redirect('/admin/') #change "user" accordingly for internal user
             else:
                 return redirect('user')
             messages.success(request, 'New comment added with success!')
@@ -238,6 +238,6 @@ def authorize_transaction(request):
             print("Status", status)
         else:
             args['error']="Wrong Option!!"
-        return redirect('/admin')
+        return redirect('/admin/')
     return render(request, 'SecureBank/authorize_transaction.html', args)  # change "summary.html" accordingly for internal user
 
