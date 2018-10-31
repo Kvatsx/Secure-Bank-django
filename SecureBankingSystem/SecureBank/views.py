@@ -18,7 +18,7 @@ from .models import Transaction
 from .decorators import external_user_required, internal_user_required
 
 # Create your views here.
-# @login_required()
+
 def index(request):
     return redirect('login')
 
@@ -34,6 +34,7 @@ def login_user(request):
     if request.method != 'POST':
         return render(request, 'SecureBank/login.html', args)
     else:
+        # print("User: ", request.user.email)
         username = get_value(request.POST, 'username')
         password = get_value(request.POST, 'password')
         print(username)
@@ -192,7 +193,6 @@ def home_external_user(request):
 
 
 @login_required()
-#@permission_required('BankUser.is_Manager')
 @internal_user_required()
 def home_internal_user(request):
     args = {

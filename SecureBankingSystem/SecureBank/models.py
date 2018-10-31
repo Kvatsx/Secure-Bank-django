@@ -8,6 +8,7 @@ from pyotp import random_base32, TOTP, totp
 from .utils import SecureBankException
 # from crypto.publickey import RSA
 from django.contrib.auth.models import AbstractUser
+from django.db import transaction
 
 class BankUser(models.Model):
     MAX_REGULAR_EMPLOYEE = 100000
@@ -201,7 +202,7 @@ class Transaction(models.Model):
             raise SecureBankException("Trying to access someones else account")
         if fromAccount.Balance < amount:
             raise SecureBankException("Insufficient Funds")
-        if amount > MAX_AUTO_AUTH:
+        if amount > BankUser.MAX_AUTO_AUTH:
             transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='A', Type='D')
         else:
             transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='P', Type='D')
@@ -222,13 +223,14 @@ class Transaction(models.Model):
             self.save
             raise SecureBankException('Invalid OTP')
 
-        if( self.Amount > MAX_AUTO_AUTH):
+        if( self.Amount > BankUser.MAX_AUTO_AUTH):
             self.Status = 'A'
         else:
             self.Status = 'P'
         print(self.Status)
         self.save()
 
+    @transaction.atomic
     def approve_transaction(self):
         print("Approve")
         if (self.ToAccount == None):
