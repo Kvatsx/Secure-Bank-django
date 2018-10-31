@@ -170,7 +170,8 @@ def transaction_confirmation(request, transaction_id):
 @external_user_required()
 def profile(request):
     args = {
-        'user': request.user.username
+        # 'user': request.user.username,
+        'firstName' : request.user.first_name,
     }
     return render(request, 'SecureBank/edit_profile.html', args)
 
@@ -180,6 +181,7 @@ def profile(request):
 def home_external_user(request):
     args = {
         'user': request.user.username,
+        'firstName' : request.user.first_name,
         'accounts': request.user.bankuser.account_set.all(),
         'totalBalance':''
     }
@@ -188,7 +190,8 @@ def home_external_user(request):
         balance =balance + account.Balance
     print(balance)
     args['totalBalance'] = balance
-    print(args['totalBalance'])
+    args['lastLogin'] = request.user.last_login
+    print(args)
     return render(request, 'SecureBank/summary.html', args)
 
 

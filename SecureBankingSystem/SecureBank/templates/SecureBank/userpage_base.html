@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{% static '/node_modules/getmdl-select/getmdl-select.min.css' %}">
     <script defer src="{% static '/node_modules/getmdl-select/getmdl-select.min.js' %}"></script>
 	<link rel="stylesheet" type="text/css" href="{% static 'SecureBank/userpage.css' %}">
-    <title>External User</title>
+    <title>User</title>
 {% endblock %}
 
 {% block body %}
@@ -40,7 +40,7 @@
                     <span class="mdl-list__item-primary-content">
                         <!-- <img class="sbs-logo-image" src = "{% static 'SecureBank/avatar.png' %}"/> -->
                         <i class="material-icons mdl-list__item-avatar">person</i>
-                        <span class="userpage-username">{{user}}</span>
+                        <span class="userpage-username">{{firstName}}</span>
                     </span>
                 </div>
             </header>
