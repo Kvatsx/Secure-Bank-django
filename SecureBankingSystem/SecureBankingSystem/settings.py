@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    # 'multi_captcha_admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,16 +50,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'SecureBank.middleware.OneSessionPerUserMiddleware',
     'SecureBank.middleware.AutoLogout',
+    'SecureBank.middleware.OneSessionPerUserMiddleware',
 ]
 
+# Security
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
-# SESSION_EXPIRE_SECONDS = 1*60   # 1 Minutes Session Timeout
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SECURE_HSTS_SECONDS = 3600
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-AUTO_LOGOUT_DELAY = 1   # 1 Minute Session Timeout
+
+AUTO_LOGOUT_DELAY = 5   # 5 Minute Session Timeout
 
 ROOT_URLCONF = 'SecureBankingSystem.urls'
 
@@ -92,6 +99,7 @@ DATABASES = {
     }
 }
 
+# AUTH_USER_MODEL = 'SecureBank.BankUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

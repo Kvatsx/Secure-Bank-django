@@ -8,17 +8,18 @@ from pyotp import random_base32, TOTP, totp
 from .utils import SecureBankException
 # from crypto.publickey import RSA
 from django.contrib.auth.models import AbstractUser
-
-BITS = 1024
-
+from django.db import transaction
 
 class BankUser(models.Model):
-    class Meta:
-        permissions = (
-            ("is_External_User", "Customer of bank"),
-            ("is_Internal_User", "Employee has permissions to access User data"),
-            ("is_Manager", "Manager has permission to access transactions")
-        )
+    MAX_REGULAR_EMPLOYEE = 100000
+    MAX_AUTO_AUTH = 10000
+    BITS = 1024
+    # class Meta:
+    #     permissions = (
+    #         ("is_External_User", "Customer of bank"),
+    #         ("is_Internal_User", "Employee has permissions to access User data"),
+    #         ("is_Manager", "Manager has permission to access transactions")
+    #     )
 
     TYPES = (
         ('R', 'Regular Employee'),
@@ -85,7 +86,8 @@ class Account(models.Model):
     Balance = models.IntegerField(default=0, editable=True)
 
     def __str__(self):
-        return self.AccountHolder.user.username + " " + str(self.AccountNumber) + " " + str(self.Balance)
+        return str(self.AccountNumber)
+        # return self.AccountHolder.user.username + " " + str(self.AccountNumber) + " " + str(self.Balance)
 
     def Credit(self, amount):
         try:
@@ -108,24 +110,24 @@ class Account(models.Model):
 
 class Transaction(models.Model):
     STATUS = (
-        ('O', 'OTP'),
-        ('A', 'Internal User Approval required'),
-        ('P', 'Complete'),
-        ('R', 'Rejected by Internal User'),
-        ('E', 'Error occured during transaction'),
+        ('O', 'OTP required'),
+        ('A', 'Approval required'),
+        ('P', 'Processed'),
+        ('R', 'Rejected'),
+        ('E', 'Unsuccessful'),
     )
 
     TYPE = (
         ('C', 'Credit'),
         ('D', 'Debit'),
-        ('T', 'Transaction'),
+        ('T', 'Transfer'),
     )
     Employee = models.ForeignKey(BankUser, null=True, blank=True, on_delete=SET_NULL)
     FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)
     ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
     Amount = models.IntegerField(default=0, editable=False)
-    Status = models.CharField(max_length=1, choices=STATUS)
-    Type = models.CharField(max_length=1, default='T', choices=TYPE, editable=False)
+    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+    Type = models.CharField(max_length=1,default='T',choices=TYPE,editable=False)
     CreationTime = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
@@ -200,7 +202,7 @@ class Transaction(models.Model):
             raise SecureBankException("Trying to access someones else account")
         if fromAccount.Balance < amount:
             raise SecureBankException("Insufficient Funds")
-        if amount > 1000:
+        if amount > BankUser.MAX_AUTO_AUTH:
             transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='A', Type='D')
         else:
             transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='P', Type='D')
@@ -221,13 +223,14 @@ class Transaction(models.Model):
             self.save
             raise SecureBankException('Invalid OTP')
 
-        if (self.Amount > 1000):
+        if( self.Amount > BankUser.MAX_AUTO_AUTH):
             self.Status = 'A'
         else:
             self.Status = 'P'
         print(self.Status)
         self.save()
 
+    @transaction.atomic
     def approve_transaction(self):
         print("Approve")
         if (self.ToAccount == None):
@@ -236,11 +239,19 @@ class Transaction(models.Model):
             self.FromAccount.Debit(self.Amount)
             self.ToAccount.Debit(self.Amount)
         self.Status = "P"
+        self.save()
         return self.Status
 
     def reject_transaction(self):
         print("Reject Transaction")
         self.Status = 'R'
+        self.save()
+        return self.Status
+
+    def mark_error(self):
+        print("Error transaction")
+        self.Status = 'E'
+        self.save()
         return self.Status
 
 
