@@ -58,7 +58,7 @@ SECURE_BROWSER_XSS_FILTER = True
 # SESSION_EXPIRE_SECONDS = 1*60   # 1 Minutes Session Timeout
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-AUTO_LOGOUT_DELAY = 1   # 1 Minute Session Timeout
+AUTO_LOGOUT_DELAY = 5   # 5 Minute Session Timeout
 
 ROOT_URLCONF = 'SecureBankingSystem.urls'
 

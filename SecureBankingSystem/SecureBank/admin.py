@@ -38,6 +38,7 @@ class TransactionAdmin(admin.ModelAdmin):
         rows_filtered = len(queryset)
         rows_updated = 0
         rows_problem = 0
+        different_status = 0
         for obj in queryset:
             if obj.Status=='A':
                 try:
@@ -47,6 +48,8 @@ class TransactionAdmin(admin.ModelAdmin):
                     rows_problem+=1
                     print("error occured for transaction ", obj)
                     # mark the transaction as error
+            else:
+                different_status+=1
         if rows_updated == 1:
             message_bit = "1 Transaction was"
         else:
@@ -54,8 +57,10 @@ class TransactionAdmin(admin.ModelAdmin):
         msg = "{} Approved".format(message_bit)
         if rows_problem > 0:
             msg = msg + "{} could not Approve".format(rows_problem)
+        if different_status > 0:
+            msg = msg + ". {} don't have status 'Approval Required'".format(different_status)
         if selected-rows_filtered > 0:
-            msg = msg + " {} Ignored. Permission Required for Amount greater than {}".format(selected-rows_filtered, BankUser.MAX_REGULAR_EMPLOYEE)
+            msg = msg + ". {} Ignored. Permission Required for Amount greater than {}".format(selected-rows_filtered, BankUser.MAX_REGULAR_EMPLOYEE)
         self.message_user(request, msg)
     approve.short_description = "Approve selected transactions"
     
@@ -66,8 +71,9 @@ class TransactionAdmin(admin.ModelAdmin):
         rows_filtered = len(queryset)
         rows_updated = 0
         rows_problem = 0
+        different_status = 0
         for obj in queryset:
-            if obj.Status=='R':
+            if obj.Status=='A':
                 try:
                     obj.reject_transaction()
                     rows_updated+=1
@@ -75,6 +81,8 @@ class TransactionAdmin(admin.ModelAdmin):
                     rows_problem+=1
                     print("error occured for transaction ", obj)
                     # mark the transaction as error
+            else:
+                different_status+=1
         if rows_updated == 1:
             message_bit = "1 Transaction was"
         else:
@@ -82,6 +90,8 @@ class TransactionAdmin(admin.ModelAdmin):
         msg = "{} Rejected.".format(message_bit)
         if rows_problem > 0:
             msg = msg + " {} could not Reject.".format(rows_problem)
+        if different_status > 0:
+            msg = msg + ". {} don't have status 'Approval Required'".format(different_status)
         if selected-rows_filtered > 0:
             msg = msg + " {} Ignored. Permission Required for Amount greater than {}".format(selected-rows_filtered, BankUser.MAX_REGULAR_EMPLOYEE)
         self.message_user(request, msg)
@@ -90,6 +100,13 @@ class TransactionAdmin(admin.ModelAdmin):
 class BankUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(BankUserForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['email'].required = True
+
+
+class BankUserChangeForm(UserChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(BankUserChangeForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['email'].required = True
 
@@ -107,7 +124,7 @@ class BankUserInline(admin.StackedInline):
     verbose_name_plural = 'bankuser'
 
 class UserAdmin(BaseUserAdmin):
-    form = BankUserForm
+    form = BankUserChangeForm
     add_form = BankUserForm
     add_fieldsets = (
         (None, {
