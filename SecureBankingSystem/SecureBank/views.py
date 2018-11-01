@@ -53,7 +53,7 @@ def login_user(request):
 
         print("User == None", user is None)
         # if user is not None and result['success']:
-        if user is not None and True:
+        if user is not None and response:
             login(request, user)
             if (user.is_staff):
                 return redirect('/admin') #change "user" accordingly for internal user
