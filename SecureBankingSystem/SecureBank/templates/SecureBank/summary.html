@@ -2,12 +2,29 @@
 
 
 {% block main_content %}
-    <div class="page-content mdl-grid">
-    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
-    		<span>Total Balance: Rs.{{ totalBalance }}</span>
-    	</div>
-    	<div class = "summary-balance mdl-cell mdl-grid">
-    		<table class="summary-accounts mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+
+
+    <div class="page-content mdl-grid ">
+		<div class = "summary-balance mdl-card__title mdl-shadow--2dp mdl-card--border mdl-cell mdl-cell--3-col mdl-grid">
+				<span class="mdl-card__title-text">Total Balance: &nbsp;</span>
+				<span class="mdl-card__title-text mdl-color-text--blue"> Rs.{{ totalBalance }}</span>
+			</div>
+				<!-- <div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+						<span>Last Activity: </span>
+				</div>
+				<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+					<span>Last password change: </span>
+				</div> -->
+	
+			<div class = "summary-balance mdl-card__title mdl-shadow--2dp mdl-card--border mdl-cell  mdl-cell--5-col mdl-grid">
+				<span class="mdl-card__title-text">Last Login: &nbsp;</span>
+				<span class="mdl-card__title-text mdl-color-text--blue">{{ lastLogin }}</span>
+			</div>
+			<!-- <div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
+				<span>Last Failed Login Attempt: </span>
+			</div> -->
+		<div class = "summary-balance  mdl-cell--4-col mdl-cell mdl-grid">
+			<table class="summary-accounts mdl-cell--4-col mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 				<thead>
 					<tr>
 						<th>Account Number</th>
@@ -16,25 +33,10 @@
 				</thead>
 				<tbody clas="summary-accounts-body">
 				{% for account in accounts %}
-                    <tr><td>{{ account.AccountNumber }}</td><td>{{ account.Balance }}</td></tr>
+					<tr><td>{{ account.AccountNumber }}</td><td>{{ account.Balance }}</td></tr>
 				{% endfor %}
 				</tbody>
 			</table>
-    	</div>
-
-    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
-    		<span>Last Activity: </span>
-    	</div>
-    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
-    		<span>Last password change: </span>
-    	</div>
-
-    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
-    		<span>Last site visit: </span>
-    	</div>
-    	<div class = "summary-balance mdl-cell mdl-cell--2-col mdl-grid">
-    		<span>Last Failed Login Attempt: </span>
-    	</div>
-    	
+		</div>
     </div>
 {% endblock %}

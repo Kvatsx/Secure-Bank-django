@@ -2,6 +2,11 @@
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
+{% block extrahead %}
+{% load static %}
+<link rel="icon" type="image/png" href="{% static 'SecureBank/logo.png' %}"/>
+{% endblock %}
+
 {% block branding %}
 <h1 id="site-name"><a href="{% url 'index' %}">{{ "IIITD Bank"|default:_('Django administration') }}</a></h1>
 {% endblock %}
