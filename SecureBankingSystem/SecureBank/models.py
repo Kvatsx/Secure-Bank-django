@@ -182,12 +182,12 @@ class Transaction(models.Model):
         ('D', 'Debit'),
         ('T', 'Transfer'),
     )
-    Employee = models.ForeignKey(BankUser, null=True, blank=True, on_delete=SET_NULL)
-    FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)
-    ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
-    Amount = models.IntegerField(default=0, editable=False)
-    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
-    Type = models.CharField(max_length=1,default='T',choices=TYPE,editable=False)
+    Employee = models.ForeignKey(BankUser, null=True, blank=False, on_delete=SET_NULL)
+    FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=False)
+    ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=False)
+    Amount = models.IntegerField(default=0, editable=True)
+    Status = models.CharField(max_length=1, choices=STATUS, editable=True)
+    Type = models.CharField(max_length=1, default='T',choices=TYPE,editable=True)
     CreationTime = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
@@ -200,7 +200,8 @@ class Transaction(models.Model):
             return str(self.id) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
 
     @staticmethod
-    def Create(user,fromAccountNumber, toAccountNumber, amount):
+    def Create(user, fromAccountNumber, toAccountNumber, amount):
+        print("create")
         try:
             amount = int(amount.strip())
             fromAccountNumber = int(fromAccountNumber.strip())

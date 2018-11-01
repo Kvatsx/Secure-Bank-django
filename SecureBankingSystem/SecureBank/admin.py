@@ -18,17 +18,32 @@ from .models import *
 #         self.fields['first_name'].required = True
 #         self.fields['email'].required = True
 
+def pki_util():
+    print("hello new user")
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount')
-    list_filter = ('Status','CreationTime', 'FromAccount', 'ToAccount')
-    fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ()}
-        ),
-    )
+    list_display = ('Amount','Type', 'Status', 'FromAccount', 'ToAccount', 'CreationTime')
+    list_filter = ('Status', 'Type', 'CreationTime', 'FromAccount', 'ToAccount')
+    fields = ('Amount', 'Status', 'FromAccount', 'ToAccount', 'Employee', 'Type')
+    # def add_view(self,request,extra_content=None):
+    #     self.include = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')
+    #     # self.fields['Amount'].required = True
+    #     # self.fields['Type'].required = True
+    #     # self.fields['Status'].required = True
+    #     # self.fields['FromAccount'].required = True
+    #     # self.fields['ToAccount'].required = True
+    #     # self.fields['CreationTime'].required = True
+    #     # self.fields['Employee'].required = True
+    #     return super(TransactionAdmin, self).add_view(request)
+
+    def change_view(self,request,object_id,extra_content=None):
+        self.exclude = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')
+        return super(TransactionAdmin, self).change_view(request,object_id)
+
+    # def save_model(self, request, obj, form, change):
+    #     super().save_model(request, obj, form, change)
+   
     actions = ['approve', 'reject']
 
     def approve(self, request, queryset):
@@ -46,6 +61,7 @@ class TransactionAdmin(admin.ModelAdmin):
                     rows_updated+=1
                 except:
                     rows_problem+=1
+                    obj.mark_error()
                     print("error occured for transaction ", obj)
                     # mark the transaction as error
             else:
@@ -79,6 +95,7 @@ class TransactionAdmin(admin.ModelAdmin):
                     rows_updated+=1
                 except:
                     rows_problem+=1
+                    obj.mark_error()
                     print("error occured for transaction ", obj)
                     # mark the transaction as error
             else:
@@ -149,6 +166,10 @@ class UserAdmin(BaseUserAdmin):
     def get_type(self, instance):
         return instance.bankuser.type_of_user
     get_type.short_description = 'User Type'
+
+    def save_model(self, request, obj, form, change):
+        pki_util()
+        super().save_model(request, obj, form, change)
 
     # def get_inline_instances(self, request, obj=None):
     #     if not obj:
