@@ -37,7 +37,7 @@ class BankUser(models.Model):
     # UID ( Primary Key ), Last Login, Last transaction, last password change, failed login attempt, type of user
     user = models.OneToOneField(User, unique=True, on_delete=CASCADE, primary_key=True)
     phone = models.CharField(max_length=10)
-    EmailID = models.EmailField(max_length=70, null=False)
+    # EmailID = models.EmailField(max_length=70, null=False)
     address = models.CharField(max_length=250)
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
@@ -359,11 +359,11 @@ class ProfileEditRequest(models.Model):
             validate_email(newEmail)
             validate_email(oldEmail)
         except:
-            raise SecureBankException("Wrong Email Type!!")
+            raise SecureBankException("Enter Valid Email")
         print("Done2")
         #Checking username of the user and and input user
         if user.user.email != oldEmail:
-            raise SecureBankException("Trying to access someones else account")
+            raise SecureBankException("Old Email Wrong!")
         print("Done3")
         editRequest = ProfileEditRequest(user= user, newEmail =newEmail, Status='A')
         print("Done")

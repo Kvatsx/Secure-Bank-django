@@ -26,7 +26,7 @@ def index(request):
 def login_user(request):
     if request.user.is_authenticated:
         if (request.user.is_staff):
-            return redirect('/admin')  # change "user" accordingly for internal user
+            return redirect('/admin/')  # change "user" accordingly for internal user
         else:
             return redirect('user')
     args = {
@@ -55,7 +55,7 @@ def login_user(request):
         # if user is not None and response:
             login(request, user)
             if (user.is_staff):
-                return redirect('/admin') #change "user" accordingly for internal user
+                return redirect('/admin/') #change "user" accordingly for internal user
             else:
                 return redirect('user')
         else:
@@ -98,6 +98,8 @@ def fundtransfer(request):
     except SecureBankException as b:
         args['error'] = b.args
         print(b.args)
+        for err in b.args:
+            messages.error(request, err)
         return render(request, 'SecureBank/funds_transfer.html', args)
     print(request.user.bankuser.generateOTP())
     return redirect("transaction_confirmation", transaction_id=transaction.id)
@@ -127,6 +129,8 @@ def fundcredit(request):
     except SecureBankException as b:
         args['error'] = b.args
         print(b.args)
+        for err in b.args:
+            messages.error(request, err)
         return render(request, 'SecureBank/fund_credit.html', args)
     print(transaction.Status)
     return redirect("user")
@@ -153,7 +157,8 @@ def funddebit(request):
         transaction = Transaction.CreateDebit(request.user, SenderAccountNumber, Amount)
     except SecureBankException as b:
         args['error'] = b.args
-        print(b.args)
+        for err in b.args:
+            messages.error(request, err)
         return render(request, 'SecureBank/fund_debit.html', args)
     print(request.user.bankuser.generateOTP())
     return redirect("transaction_confirmation", transaction_id=transaction.id)
@@ -190,6 +195,8 @@ def transaction_confirmation(request, transaction_id):
     except SecureBankException as e:
         args['error'] = e.args
         print(args['error'])
+        for err in e.args:
+            messages.error(request, err)
         return render(request, 'SecureBank/confirm_transaction.html', args)
     return redirect('user')
 
@@ -223,6 +230,7 @@ def passbook(request):
 def profile(request):
     args = {
         'user': request.user.username,
+        'firstName' : request.user.first_name,
         'error':'',
         'email':''
     }
@@ -241,6 +249,7 @@ def profile(request):
         profileEditRequest = ProfileEditRequest.CreateProfileEditRequest(request.user.bankuser, oldEmailAdress, edit_email_address)
         print("Request Status ", profileEditRequest.Status)
     except Exception as e:
+        messages.error(request, e)
         print(e)
         return render(request, 'SecureBank/edit_profile.html', args)
     return redirect("user")
@@ -257,6 +266,7 @@ def profile(request):
 def home_external_user(request):
     args = {
         'user': request.user.username,
+        'firstName' : request.user.first_name,
         'accounts': request.user.bankuser.account_set.all(),
         'totalBalance':''
     }
@@ -267,6 +277,8 @@ def home_external_user(request):
     print(balance)
     args['totalBalance'] = balance
     print(args['totalBalance'])
+    args['lastLogin'] = request.user.last_login
+    print(args)
     return render(request, 'SecureBank/summary.html', args)
 
 
@@ -316,6 +328,6 @@ def authorize_transaction(request):
             print("Status", status)
         else:
             args['error']="Wrong Option!!"
-        return redirect('/admin')
+        return redirect('/admin/')
     return render(request, 'SecureBank/authorize_transaction.html', args)  # change "summary.html" accordingly for internal user
 
