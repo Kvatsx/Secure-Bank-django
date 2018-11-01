@@ -9,6 +9,7 @@ from .utils import SecureBankException
 # from crypto.publickey import RSA
 from django.contrib.auth.models import AbstractUser
 from django.db import transaction
+from django.core.validators import validate_email
 
 class BankUser(models.Model):
     MAX_REGULAR_EMPLOYEE = 100000
@@ -35,6 +36,7 @@ class BankUser(models.Model):
     address = models.CharField(max_length=250)
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
+    publicKey = models.CharField(max_length=10000, default='0', editable=True)
 
     # private_key = models.CharField()
     # public_key = models.CharField()
@@ -53,7 +55,11 @@ class BankUser(models.Model):
 
     # https://pyotp.readthedocs.io/en/latest/
     def generateOTP(self):
-        self.otp_value = TOTP('base32secret3232', interval=120).now()
+
+        baseForOtp = 'base32secret3232'
+        print(baseForOtp)
+        print("base", type(baseForOtp))
+        self.otp_value = TOTP(baseForOtp, interval=120).now()
         self.save()
         subject = 'OTP From Secure Bank'
         message = self.otp_value
@@ -66,11 +72,20 @@ class BankUser(models.Model):
         # djexmo.send_message(frm='+919717384229', to='+918700543963', text='My sms')
         # zerosms.sms(phno=username, passwd=password, receivernum=sendto, message=msg)
 
-    def verifyOTP(self, otp):
-        pot = TOTP('base32secret3232', interval=120)
+    def verifyOTP(self, otp, transaction_key):
+        baseForOtp = 'base32secret3232'
+        print(baseForOtp)
+        print("base",  type(baseForOtp))
+        pot = TOTP(baseForOtp, interval=120)
         value = pot.verify(otp)
         print('value', value)
         return pot.verify(otp)
+
+    def EditEmail(self, newEmail):
+        self.EmailID = newEmail
+        self.save()
+
+
 
 
 # class Payment(models.Model):
@@ -140,11 +155,13 @@ class Transaction(models.Model):
             return str(self.id) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
 
     @staticmethod
-    def Create(user, fromAccountNumber, toAccountNumber, amount):
+    def Create(user,fromAccountNumber, toAccountNumber, amount):
         try:
             amount = int(amount.strip())
+            fromAccountNumber = int(fromAccountNumber.strip())
+            toAccountNumber = int(toAccountNumber.strip())
         except:
-            raise SecureBankException('Error in account number')
+            raise SecureBankException('Error in format of account number/amount')
         if (amount <= 0):
             raise SecureBankException('Negative Ammount')
         fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
@@ -171,8 +188,9 @@ class Transaction(models.Model):
         print("Do Credit Here")
         try:
             amount = int(amount.strip())
+            fromAccountNumber = int(fromAccountNumber.strip())
         except:
-            raise SecureBankException('Error in account number')
+            raise SecureBankException('Error in format of account number/amount')
         if (amount <= 0):
             raise SecureBankException('Negative Ammount')
         fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
@@ -181,17 +199,19 @@ class Transaction(models.Model):
         fromAccount = fromAccount[0]
         if fromAccount.AccountHolder.user.username != user.username:
             raise SecureBankException("Trying to access someones else account")
-        transaction = Transaction(FromAccount=None, ToAccount=fromAccount, Amount=amount, Status='P', Type='C')
-        fromAccount.Credit(amount)
+        transaction = Transaction(FromAccount=None, ToAccount=fromAccount, Amount=amount, Status='A', Type='C')
+        print("Done")
         transaction.save()
+        return transaction
 
     @staticmethod
     def CreateDebit(user, fromAccountNumber, amount):
         print("Do Debit Here")
         try:
             amount = int(amount.strip())
+            fromAccountNumber = int(fromAccountNumber.strip())
         except:
-            raise SecureBankException('Error in account number')
+            raise SecureBankException('Error in format of account number/amount')
         if (amount <= 0):
             raise SecureBankException('Negative Ammount')
         fromAccount = Account.objects.filter(AccountNumber=fromAccountNumber)
@@ -202,15 +222,14 @@ class Transaction(models.Model):
             raise SecureBankException("Trying to access someones else account")
         if fromAccount.Balance < amount:
             raise SecureBankException("Insufficient Funds")
-        if amount > BankUser.MAX_AUTO_AUTH:
-            transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='A', Type='D')
-        else:
-            transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='P', Type='D')
-            fromAccount.Debit(amount)
+        #STATUS as O - OTP
+        transaction = Transaction(FromAccount=fromAccount, ToAccount=None, Amount=amount, Status='O', Type='D')
+        #fromAccount.Debit(amount)
         transaction.save()
+        print("Done")
         return transaction
 
-    def verify_otp(self, otpvalue):
+    def verify_otp(self, otpvalue,transaction_key):
         try:
             otp = int(otpvalue)
         except:
@@ -218,26 +237,34 @@ class Transaction(models.Model):
             self.save
             raise SecureBankException('Invalid OTP Here')
 
-        if not self.FromAccount.AccountHolder.verifyOTP(otp):
+        if self.FromAccount is None:
+            raise SecureBankException("Invalid Access")
+
+        if self.Status == 'O' and (not self.FromAccount.AccountHolder.verifyOTP(otp, transaction_key)):
             self.Status = 'E'
             self.save
             raise SecureBankException('Invalid OTP')
 
-        if( self.Amount > BankUser.MAX_AUTO_AUTH):
+        if self.Amount > BankUser.MAX_AUTO_AUTH or self.Type == 'D':
             self.Status = 'A'
         else:
             self.Status = 'P'
+            self.approve_transaction()
         print(self.Status)
         self.save()
 
     @transaction.atomic
     def approve_transaction(self):
         print("Approve")
-        if (self.ToAccount == None):
+        if self.ToAccount is None:
+            print("TYPE DEBIT")
             self.FromAccount.Debit(self.Amount)
+        elif self.FromAccount is None:
+            print("TYPE CREDIT")
+            self.ToAccount.Credit(self.Amount)
         else:
             self.FromAccount.Debit(self.Amount)
-            self.ToAccount.Debit(self.Amount)
+            self.ToAccount.Credit(self.Amount)
         self.Status = "P"
         self.save()
         return self.Status
@@ -262,3 +289,54 @@ class LoggedInUser(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class ProfileEditRequest(models.Model):
+    user = models.ForeignKey(BankUser, null=True, blank=True, on_delete=SET_NULL)
+    newEmail = models.EmailField(max_length=70, null=False)
+    STATUS = (
+        ('A', 'Approval required'),
+        ('P', 'Processed'),
+        ('R', 'Rejected'),
+        ('E', 'Unsuccessful'),
+    )
+    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+
+    def _str_(self):
+        return "Change "+ self.user.EmailID + " To " + self.newEmail
+
+    @staticmethod
+    def CreateProfileEditRequest(user, oldEmail, newEmail):
+        print("CREATE REQUEST")
+        try:
+            validate_email(newEmail)
+            validate_email(oldEmail)
+        except:
+            raise SecureBankException("Wrong Email Type!!")
+        print("Done2")
+        #Checking username of the user and and input user
+        if user.EmailID != oldEmail:
+            raise SecureBankException("Trying to access someones else account")
+        print("Done3")
+        editRequest = ProfileEditRequest(user= user, newEmail =newEmail, Status='A')
+        print("Done")
+        editRequest.save()
+        return editRequest
+
+    def ApproveProfileEditRequest(self):
+        print("Approve Request Here")
+        if self.user != None:
+            self.user.EditEmail(self.newEmail)
+            self.Status = 'P'
+        else:
+            raise SecureBankException("Error in mail/user")
+
+        self.save()
+        return self.Status
+
+
+
+    def RejectProfileEditRequest(self):
+        print("Reject Edit Request Here")
+        self.Status = 'R'
+        self.save()
+        return self.Status

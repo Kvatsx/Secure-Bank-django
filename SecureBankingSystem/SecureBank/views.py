@@ -14,8 +14,9 @@ from django.urls import reverse
 from .utils import get_value, SecureBankException
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from .models import Transaction
+from .models import Transaction, BankUser, ProfileEditRequest
 from .decorators import external_user_required, internal_user_required
+from django.db.models import Q
 
 # Create your views here.
 
@@ -51,7 +52,8 @@ def login_user(request):
         result = json.loads(response.read().decode())
 
         print("User == None", user is None)
-        if user is not None and result['success']:
+        # if user is not None and result['success']:
+        if user is not None and True:
             login(request, user)
             if (user.is_staff):
                 return redirect('/admin') #change "user" accordingly for internal user
@@ -84,9 +86,14 @@ def fundtransfer(request):
     # TODO: Need to get all account of the user and show in the UI
     if request.method != 'POST':
         return render(request, 'SecureBank/funds_transfer.html', args)
-    SenderAccountNumber = get_value(request.POST, 'funds_transfer_user_account')
-    BeneficiaryAccountNumber = get_value(request.POST, 'funds_transfer_beneficiary_account')
-    Amount = get_value(request.POST, 'funds_transfer_amount')
+    try:
+        SenderAccountNumber = get_value(request.POST, 'funds_transfer_user_account')
+        BeneficiaryAccountNumber = get_value(request.POST, 'funds_transfer_beneficiary_account')
+        Amount = get_value(request.POST, 'funds_transfer_amount')
+    except Exception as e:
+        print(e)
+        return render(request, 'SecureBank/funds_transfer.html', args)
+
     print("Input entered by user", SenderAccountNumber, BeneficiaryAccountNumber, Amount)
     try:
         transaction = Transaction.Create(request.user, SenderAccountNumber, BeneficiaryAccountNumber, Amount)
@@ -108,8 +115,14 @@ def fundcredit(request):
     # TODO: Need to get all account of the user and show in the UI
     if request.method != 'POST':
         return render(request, 'SecureBank/fund_credit.html', args)
-    SenderAccountNumber = get_value(request.POST, 'funds_credit_user_account')
-    Amount = get_value(request.POST, 'funds_credit_amount')
+
+    try:
+        SenderAccountNumber = get_value(request.POST, 'funds_credit_user_account')
+        Amount = get_value(request.POST, 'funds_credit_amount')
+    except Exception as e:
+        print(e)
+        return render(request, 'SecureBank/fund_credit.html', args)
+
     print("Input entered by user for Credit", SenderAccountNumber , Amount)
     try:
         transaction = Transaction.CreateCredit(request.user, SenderAccountNumber, Amount)
@@ -117,6 +130,7 @@ def fundcredit(request):
         args['error'] = b.args
         print(b.args)
         return render(request, 'SecureBank/fund_credit.html', args)
+    print(transaction.Status)
     return redirect("user")
 
 @login_required()
@@ -130,8 +144,12 @@ def funddebit(request):
     # TODO: Need to get all account of the user and show in the UI
     if request.method != 'POST':
         return render(request, 'SecureBank/fund_debit.html', args)
-    SenderAccountNumber = get_value(request.POST, 'funds_debit_user_account')
-    Amount = get_value(request.POST, 'funds_debit_amount')
+    try:
+        SenderAccountNumber = get_value(request.POST, 'funds_debit_user_account')
+        Amount = get_value(request.POST, 'funds_debit_amount')
+    except Exception as e:
+        print(e)
+        return render(request, 'SecureBank/fund_debit.html', args)
     print("Input entered by user For debit", SenderAccountNumber , Amount)
     try:
         transaction = Transaction.CreateDebit(request.user, SenderAccountNumber, Amount)
@@ -139,40 +157,101 @@ def funddebit(request):
         args['error'] = b.args
         print(b.args)
         return render(request, 'SecureBank/fund_debit.html', args)
-    return redirect("user")
+    print(request.user.bankuser.generateOTP())
+    return redirect("transaction_confirmation", transaction_id=transaction.id)
 
 
 @login_required
 @external_user_required()
 def transaction_confirmation(request, transaction_id):
-    transaction = Transaction.objects.get(pk=transaction_id)
     args = {
         'user': request.user,
-        'tid': transaction_id,
+        'tid': None,
         'error': '',
     }
+    try:
+        transaction = Transaction.objects.get(pk=transaction_id)
+        args['tid'] =transaction_id
+    except Exception as e:
+        print(e)
+        return redirect("user")
+
     if request.method != 'POST':
         return render(request, 'SecureBank/confirm_transaction.html', args)
-    otp = get_value(request.POST, 'transaction_otp')
+    try:
+        otp = get_value(request.POST, 'transaction_otp')
+        transaction_key = get_value(request.POST, 'transaction_key')
+    except Exception as e:
+        print(e)
+        return render(request, 'SecureBank/confirm_transaction.html', args)
     print(otp)
+    print("transaction key", transaction_key)
     try:
         # Need to verify otp
-        transaction.verify_otp(otp)
+        transaction.verify_otp(otp, transaction_key)
     except SecureBankException as e:
         args['error'] = e.args
         print(args['error'])
         return render(request, 'SecureBank/confirm_transaction.html', args)
     return redirect('user')
 
+@login_required()
+@external_user_required()
+def passbook(request):
+    args = {
+        'user': request.user.username,
+        'transactions': Transaction.objects.none()
+    }
+
+    try:
+        accounts = request.user.bankuser.account_set.all()
+        for account in accounts:
+            accountTransactions = Transaction.objects.filter(Q(FromAccount = account) | Q(ToAccount = account))
+            args['transactions'] = args['transactions'].union(accountTransactions)
+
+
+    except Exception as e:
+        print(e)
+        print("Error")
+        #args['transactions'] = None
+    #print(args['transactions'][0].id)
+    #args['transactions'].order_by('id').reverse()
+    print(args['transactions'])
+    return render(request, 'SecureBank/passbook.html', args)
 
 
 @login_required()
 @external_user_required()
 def profile(request):
     args = {
-        'user': request.user.username
+        'user': request.user.username,
+        'error':'',
+        'email':''
     }
-    return render(request, 'SecureBank/edit_profile.html', args)
+    if request.method != 'POST':
+        return render(request, 'SecureBank/edit_profile.html', args)
+
+
+    try:
+        oldEmailAdress = get_value(request.POST, 'old_email_address')
+        edit_email_address = get_value(request.POST, 'edit_email_address')
+    except Exception as e:
+        print(e)
+        return render(request, 'SecureBank/edit_profile.html', args)
+
+    try:
+        profileEditRequest = ProfileEditRequest.CreateProfileEditRequest(request.user.bankuser, oldEmailAdress, edit_email_address)
+        print("Request Status ", profileEditRequest.Status)
+    except Exception as e:
+        print(e)
+        return render(request, 'SecureBank/edit_profile.html', args)
+    return redirect("user")
+
+
+
+
+
+
 
 
 @login_required()
@@ -184,6 +263,7 @@ def home_external_user(request):
         'totalBalance':''
     }
     balance =0
+    print("type", args['accounts'])
     for account in args['accounts']:
         balance =balance + account.Balance
     print(balance)

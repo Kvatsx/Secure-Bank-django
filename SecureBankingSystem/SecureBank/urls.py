@@ -12,10 +12,11 @@ urlpatterns = [
     url(r'^fundtransfer/$', views.fundtransfer, name='fundtransfer'),
     url(r'^fundcredit/$', views.fundcredit, name='fundcredit'),
     url(r'^funddebit/$', views.funddebit, name='funddebit'),
+    url(r'^passbook/$', views.passbook, name='passbook'),
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^user/$', views.home_external_user, name='user'),
-    # url(r'^manager/$', views.home_internal_user, name='manager'),
-    url(r'^authorize_transaction/$', views.authorize_transaction, name='authorize_transaction'),
+    #url(r'^manager/$', views.home_internal_user, name='manager'),
+    #url(r'^authorize_transaction/$', views.authorize_transaction, name='authorize_transaction'),
     url(r'^$', views.index, name='index'),
 
     url(r'^transaction_confirmation/(?P<transaction_id>[0-9]+)/$', views.transaction_confirmation,
