@@ -12,6 +12,10 @@ from django.db import transaction
 from passlib.hash import pbkdf2_sha256
 from django.core.validators import validate_email
 
+
+
+
+
 class BankUser(models.Model):
     MAX_REGULAR_EMPLOYEE = 100000
     MAX_AUTO_AUTH = 10000
@@ -38,7 +42,6 @@ class BankUser(models.Model):
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
     publicKey = models.CharField(max_length=10000, default='0', editable=True)
-    privateKey = models.CharField(max_length=10000, default='0', editable=True)
 
 
     # private_key = models.CharField()
@@ -62,7 +65,8 @@ class BankUser(models.Model):
         baseForOtp = 'base32secret3232'
         print(baseForOtp)
         print("base", type(baseForOtp))
-        self.otp_value = TOTP(baseForOtp, interval=120).now()
+        otp = TOTP(baseForOtp, interval=100).now()
+        self.otp_value = otp
         self.save()
         subject = 'OTP From Secure Bank'
         message = self.otp_value
@@ -79,20 +83,40 @@ class BankUser(models.Model):
     def verifyOTP(self, otp, transaction_key):
         # emsg=pbkdf2_sha256.encrypt(self.publicKey, rounds=12000, salt_size=32)
 
-        msg= '-----BEGIN PUBLIC KEY-----\nMIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQEAxsTivxMNa9AvRAYNdz2H\n9bFtK7hpGeOOKI7b4U2JvVd6jrTHATo9hX+cA1SnN27uy8IuiUSJXjD4u7RYmK7+\nWZWgeDbZIHJMEYyynTCTM459FN5w1XvQKDrlEBGdDOZ6KP47/A7kLBenyL4T7TEA\n8P7XtcT9p60zLMPZxtWiphBUd+SVIHOVh/S2NMw/9SI2KVqsURIDJ7nip6juGCs2\n86cpbKI3bMQ87ru9Cr84dOk6jLV7xkiF1iP8M017OCvKpFT9E6RQk0Ol/vd5wt9o\nhxvJxI2DJb5ZvOx4s7dtySu27RtvUOzffhYfPnqdQybbBUB+DzhBjLSDgZEaOemN\nOwICBT0=\n-----END PUBLIC KEY-----'
-        # msg = 'abcd'
-        msg=msg.replace('\n', 'n')
-        print(self.publicKey)
-        print(msg == self.publicKey)
-        flag=pbkdf2_sha256.verify(self.publicKey, transaction_key)
-        print(flag)
-        print(self.publicKey)
         baseForOtp = 'base32secret3232'
         print(baseForOtp)
-        print("base",  type(baseForOtp))
-        pot = TOTP(baseForOtp, interval=120)
+        print("base", type(baseForOtp))
+        print(otp)
+        pot = TOTP(baseForOtp, interval=100)
         value = pot.verify(otp)
         print('value', value)
+
+        if not value:
+            return value
+
+        try:
+            key = self.user.keylist_set.all().filter(key = transaction_key)
+        except Exception as e:
+            print(e)
+            return False
+
+        if len(key) != 0:
+            return False
+
+
+        key = keyList(key = transaction_key, user = self.user)
+        print(key)
+        key.save()
+
+        print(self.publicKey)
+        try:
+
+            flag=pbkdf2_sha256.verify(self.publicKey, transaction_key)
+            print(flag)
+            print(self.publicKey)
+        except:
+            print("Exception in key")
+            return False
         return pot.verify(otp) and flag
 
     def EditEmail(self, newEmail):
@@ -100,6 +124,13 @@ class BankUser(models.Model):
         self.save()
 
 
+
+class keyList(models.Model):
+    key = models.CharField(primary_key=True, unique = True, max_length=10000, default ='')
+    user = models.ForeignKey(User, on_delete=CASCADE)
+
+    def __str__(self):
+        return str(self.key)
 
 
 # class Payment(models.Model):
@@ -243,9 +274,10 @@ class Transaction(models.Model):
         print("Done")
         return transaction
 
-    def verify_otp(self, otpvalue,transaction_key):
+    def verify_otp(self, otp,transaction_key):
         try:
-            otp = int(otpvalue)
+            otpvalue = otp
+            otp = int(otpvalue.strip())
         except:
             self.Status = 'E'
             self.save
@@ -254,7 +286,7 @@ class Transaction(models.Model):
         if self.FromAccount is None:
             raise SecureBankException("Invalid Access")
 
-        if self.Status == 'O' and (not self.FromAccount.AccountHolder.verifyOTP(otp, transaction_key)):
+        if (self.Status == 'O' or self.Status == 'E') and (not self.FromAccount.AccountHolder.verifyOTP(otpvalue, transaction_key)):
             print(self.Status)
             self.Status = 'E'
             self.save

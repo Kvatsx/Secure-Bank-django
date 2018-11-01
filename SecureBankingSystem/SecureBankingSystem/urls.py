@@ -25,5 +25,5 @@ urlpatterns = [
     # url(r'^admin/login$', RedirectView.as_view(pattern_name='login_user', permanent=True, query_string=True)),
     url(r'^admin/', admin.site.urls),
     url(r'^SecureBank/', include('SecureBank.urls')),
-    url(r'^.*$', RedirectView.as_view(url='SecureBank/', permanent=True)),
+    #url(r'^.*$', RedirectView.as_view(url='SecureBank/', permanent=True)),
 ]
