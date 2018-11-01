@@ -6,7 +6,6 @@
         <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
             <div class="mdl-tabs__tab-bar">
                 <a href="#edit_info" class="mdl-tabs__tab is-active">Main Info</a>
-                <a href="#change_password" class="mdl-tabs__tab">Change Password</a>
             </div>
 
             <div class="mdl-tabs__panel is-active" id="edit_info">
@@ -19,59 +18,18 @@
                             <span class="mdl-textfield__error">Required</span>
 
                         </div>
-<!--
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="text" id="edit_info_lastname" placeholder="{{user}}">
-                            <label class="mdl-textfield__label" for="edit_info_lastname">Last Name</label>
-                            <span class="mdl-textfield__error">Required</span> -->
-
-                        <!-- </div> -->
-                    <!-- </div> -->
-
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" placeholder="stored address">
-                        <textarea class="mdl-textfield__input is-invalid" type="text" rows= "3" maxrows="5" id="edit_info_address"></textarea>
-                        <!-- <input class="mdl-textfield__input" type="text" id="edit_info_mobile" pattern="^.{1,}$"> -->
-                        <label class="mdl-textfield__label" for="edit_info_address">Address</label>
-                        <span class="mdl-textfield__error">Required</span>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="email" name="old_email_address"  id="old_email_address">
+                        <label class="mdl-textfield__label" for="old_email_address">Old Email</label>
+                        <span class="mdl-textfield__error">Enter valid Email</span>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="email" name="edit_email_address"  id="edit_email_address">
+                        <label class="mdl-textfield__label" for="edit_email_address">New Email</label>
+                        <span class="mdl-textfield__error">Enter valid Email</span>
                     </div>
 
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" placeholder="user-mobile-99999">
-                        <input class="mdl-textfield__input" type="text" id="edit_info_mobile" pattern="^[0-9]{10}$">
-                        <label class="mdl-textfield__label" for="edit_info_mobile">Mobile Number</label>
-                        <span class="mdl-textfield__error">Enter valid mobile number</span>
-                    </div>
                     <button type="submit" form="edit_info_form" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">
-                    Submit
-                    </button>
-                </form>
-            </div>
-
-
-            <div class="mdl-tabs__panel" id="change_password">
-
-                <form action="#" method="post" id="change_password_form" class="profile-form">
-                   {% csrf_token %}
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="password" id="change_password_old" pattern="^(?!^$|\s+)">
-                        <label class="mdl-textfield__label" for="change_password_old">Old Password</label>
-                        <span class="mdl-textfield__error">Required</span>
-
-                    </div>    
-
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="password" id="change_password_new" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})$">
-                        <label class="mdl-textfield__label" for="change_password_new">New Password</label>
-                        <span class="mdl-textfield__error">Your password must contain atleast eight characters, atleast one number and both lower and uppercase letters and special characters</span>
-
-<!--                         <small id="change_password_new_help" class="form-text text-muted"></small>
- -->
-                    </div>
-
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="password" id="change_password_confirm">
-                        <label class="mdl-textfield__label" for="change_password_confirm">Confirm New Password</label>
-                    </div>
-                    <button type="submit" form="funds_transfer_form" value="Submit" class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button mdl-js-ripple-effect">
                     Submit
                     </button>
                 </form>

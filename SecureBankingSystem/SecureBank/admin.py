@@ -118,7 +118,7 @@ class BankUserInlineFormset(forms.models.BaseInlineFormSet):
 
 class BankUserInline(admin.StackedInline):
     model = BankUser
-    fields = ['phone', 'type_of_user']
+    fields = ['phone', 'type_of_user', 'publicKey']
     formset = BankUserInlineFormset
     can_delete = False
     verbose_name_plural = 'bankuser'
