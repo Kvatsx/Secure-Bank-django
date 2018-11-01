@@ -9,6 +9,7 @@ from .utils import SecureBankException
 # from crypto.publickey import RSA
 from django.contrib.auth.models import AbstractUser
 from django.db import transaction
+from passlib.hash import pbkdf2_sha256
 from django.core.validators import validate_email
 
 class BankUser(models.Model):
@@ -37,6 +38,8 @@ class BankUser(models.Model):
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
     publicKey = models.CharField(max_length=10000, default='0', editable=True)
+    privateKey = models.CharField(max_length=10000, default='0', editable=True)
+
 
     # private_key = models.CharField()
     # public_key = models.CharField()
@@ -69,17 +72,28 @@ class BankUser(models.Model):
         print(self.otp_value)
         send_mail(subject, message, from_email, to, fail_silently=False)
         return self.otp_value
-        # djexmo.send_message(frm='+919717384229', to='+918700543963', text='My sms')
+        # djexmo.send_message(frm='+919717384229', to='+918700543963', te
+        # xt='My sms')
         # zerosms.sms(phno=username, passwd=password, receivernum=sendto, message=msg)
 
     def verifyOTP(self, otp, transaction_key):
+        # emsg=pbkdf2_sha256.encrypt(self.publicKey, rounds=12000, salt_size=32)
+
+        msg= '-----BEGIN PUBLIC KEY-----\nMIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQEAxsTivxMNa9AvRAYNdz2H\n9bFtK7hpGeOOKI7b4U2JvVd6jrTHATo9hX+cA1SnN27uy8IuiUSJXjD4u7RYmK7+\nWZWgeDbZIHJMEYyynTCTM459FN5w1XvQKDrlEBGdDOZ6KP47/A7kLBenyL4T7TEA\n8P7XtcT9p60zLMPZxtWiphBUd+SVIHOVh/S2NMw/9SI2KVqsURIDJ7nip6juGCs2\n86cpbKI3bMQ87ru9Cr84dOk6jLV7xkiF1iP8M017OCvKpFT9E6RQk0Ol/vd5wt9o\nhxvJxI2DJb5ZvOx4s7dtySu27RtvUOzffhYfPnqdQybbBUB+DzhBjLSDgZEaOemN\nOwICBT0=\n-----END PUBLIC KEY-----'
+        # msg = 'abcd'
+        msg=msg.replace('\n', 'n')
+        print(self.publicKey)
+        print(msg == self.publicKey)
+        flag=pbkdf2_sha256.verify(self.publicKey, transaction_key)
+        print(flag)
+        print(self.publicKey)
         baseForOtp = 'base32secret3232'
         print(baseForOtp)
         print("base",  type(baseForOtp))
         pot = TOTP(baseForOtp, interval=120)
         value = pot.verify(otp)
         print('value', value)
-        return pot.verify(otp)
+        return pot.verify(otp) and flag
 
     def EditEmail(self, newEmail):
         self.EmailID = newEmail
@@ -241,6 +255,7 @@ class Transaction(models.Model):
             raise SecureBankException("Invalid Access")
 
         if self.Status == 'O' and (not self.FromAccount.AccountHolder.verifyOTP(otp, transaction_key)):
+            print(self.Status)
             self.Status = 'E'
             self.save
             raise SecureBankException('Invalid OTP')
