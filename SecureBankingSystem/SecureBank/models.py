@@ -71,8 +71,8 @@ class BankUser(models.Model):
         subject = 'OTP From Secure Bank'
         message = self.otp_value
         from_email = 'systemadmin007@gmail.com'
-        print(self.EmailID)
-        to = [self.EmailID]
+        print(self.user.email)
+        to = [self.user.email]
         print(self.otp_value)
         send_mail(subject, message, from_email, to, fail_silently=False)
         return self.otp_value
@@ -120,8 +120,8 @@ class BankUser(models.Model):
         return pot.verify(otp) and flag
 
     def EditEmail(self, newEmail):
-        self.EmailID = newEmail
-        self.save()
+        self.user.email = newEmail
+        self.user.save()
 
 
 
@@ -347,10 +347,10 @@ class ProfileEditRequest(models.Model):
         ('R', 'Rejected'),
         ('E', 'Unsuccessful'),
     )
-    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+    Status = models.CharField(max_length=1, choices=STATUS, editable=True)
 
-    def _str_(self):
-        return "Change "+ self.user.EmailID + " To " + self.newEmail
+    def __str__(self):
+        return "Change "+ self.user.user.email + " To " + self.newEmail
 
     @staticmethod
     def CreateProfileEditRequest(user, oldEmail, newEmail):
@@ -362,7 +362,7 @@ class ProfileEditRequest(models.Model):
             raise SecureBankException("Wrong Email Type!!")
         print("Done2")
         #Checking username of the user and and input user
-        if user.EmailID != oldEmail:
+        if user.user.email != oldEmail:
             raise SecureBankException("Trying to access someones else account")
         print("Done3")
         editRequest = ProfileEditRequest(user= user, newEmail =newEmail, Status='A')
@@ -386,5 +386,11 @@ class ProfileEditRequest(models.Model):
     def RejectProfileEditRequest(self):
         print("Reject Edit Request Here")
         self.Status = 'R'
+        self.save()
+        return self.Status
+    
+    def mark_error(self):
+        print("error Edit Request Here")
+        self.Status = 'E'
         self.save()
         return self.Status
