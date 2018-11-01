@@ -25,9 +25,10 @@ def pki_util():
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('Amount','Type', 'Status', 'FromAccount', 'ToAccount', 'CreationTime')
     list_filter = ('Status', 'Type', 'CreationTime', 'FromAccount', 'ToAccount')
-    fields = ('Amount', 'Status', 'FromAccount', 'ToAccount', 'Employee', 'Type')
+    fields = ('Amount', 'FromAccount', 'ToAccount', 'Employee')
+
     # def add_view(self,request,extra_content=None):
-    #     self.include = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')
+    #     # self.include = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')
     #     # self.fields['Amount'].required = True
     #     # self.fields['Type'].required = True
     #     # self.fields['Status'].required = True
@@ -38,11 +39,25 @@ class TransactionAdmin(admin.ModelAdmin):
     #     return super(TransactionAdmin, self).add_view(request)
 
     def change_view(self,request,object_id,extra_content=None):
-        self.exclude = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')
+        self.exclude = ('Amount', 'Status', 'CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')
         return super(TransactionAdmin, self).change_view(request,object_id)
+    
+    # def formfield_for_choice_field(self, db_field, request, **kwargs):
+    #     if db_field.name == "Status":
+    #         kwargs['choices'] = (
+    #             ('A', 'Approval required'),
+    #         )
 
-    # def save_model(self, request, obj, form, change):
-    #     super().save_model(request, obj, form, change)
+    #     if db_field.name == "Type":
+    #         kwargs['choices'] = (
+    #             ('T', 'Transfer'),
+    #         )
+    #     return super(TransactionAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
+    
+    def save_model(self, request, obj, form, change):
+        obj.Status = 'A'
+        obj.Type = 'T'
+        super().save_model(request, obj, form, change)
    
     actions = ['approve', 'reject']
 
