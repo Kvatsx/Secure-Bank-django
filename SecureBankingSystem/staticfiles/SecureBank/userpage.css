@@ -1,0 +1,43 @@
+a.mdl-js-ripple-effect {
+  display: inline-block;
+  position: relative;
+}
+
+.mdl-list__item	{
+    position: relative;
+    background: #d7d9dd;
+    height: 160px;
+}
+
+/*css for summary.html*/
+.summary-accounts	{
+	height: 40px;
+}
+.summary-accounts-body	{
+	overflow: auto;
+}
+
+/*css for edit_profile.html*/
+.profile-name {
+	display:flex;
+/*	margin-top: 10px;
+	padding: 10px;*/
+	justify-content: left;
+}
+
+
+.profile-form, .fundtransfer-form, .transaction-auth-form{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 40px;
+
+}
+
+a {
+	text-decoration: none;
+}
+.logout-button	{
+	color: firebrick;
+}

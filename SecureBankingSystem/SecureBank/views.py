@@ -68,7 +68,7 @@ def login_user(request):
 def logout_user(request):
     # if request.method == 'POST':
     logout(request)
-    return HttpResponseRedirect('login')
+    return redirect('login')
     #else:
     #return HttpResponse('click on button first to logout')
 

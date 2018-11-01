@@ -6,9 +6,12 @@ from django.contrib.auth.models import User
 from django.db.models import CASCADE, SET_NULL
 from pyotp import random_base32, TOTP, totp
 from .utils import SecureBankException
-# from crypto.publickey import RSA
 from django.contrib.auth.models import AbstractUser
 from django.db import transaction
+# from Crypto.PublicKey import RSA
+# from Crypto import Random
+
+
 
 class BankUser(models.Model):
     MAX_REGULAR_EMPLOYEE = 100000
