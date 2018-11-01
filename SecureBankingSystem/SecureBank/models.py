@@ -53,10 +53,10 @@ class BankUser(models.Model):
     def __str__(self):
         return self.user.username + " " + self.type_of_user
 
-    def generateCerti(self):
-        newKey = RSA.generate(BITS)
-        self.public_key = newKey.publickey().exportKey("PEM")
-        self.private_key = newKey.exportKey("PEM")
+    # def generateCerti(self):
+    #     newKey = RSA.generate(BITS)
+    #     self.public_key = newKey.publickey().exportKey("PEM")
+    #     self.private_key = newKey.exportKey("PEM")
         # sendMail(self.public_key)
 
     # https://pyotp.readthedocs.io/en/latest/

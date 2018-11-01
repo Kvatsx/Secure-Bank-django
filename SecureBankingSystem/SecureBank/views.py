@@ -52,8 +52,8 @@ def login_user(request):
         result = json.loads(response.read().decode())
 
         print("User == None", user is None)
-        # if user is not None and result['success']:
-        if user is not None and response:
+        if user is not None and result['success']:
+        # if user is not None and response:
             login(request, user)
             if (user.is_staff):
                 return redirect('/admin') #change "user" accordingly for internal user
@@ -70,7 +70,7 @@ def login_user(request):
 def logout_user(request):
     # if request.method == 'POST':
     logout(request)
-    return HttpResponseRedirect('login')
+    return redirect('login')
     #else:
     #return HttpResponse('click on button first to logout')
 
