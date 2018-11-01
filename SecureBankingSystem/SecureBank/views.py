@@ -25,7 +25,7 @@ def index(request):
 def login_user(request):
     if request.user.is_authenticated:
         if (request.user.is_staff):
-            return redirect('/admin')  # change "user" accordingly for internal user
+            return redirect('/admin/')  # change "user" accordingly for internal user
         else:
             return redirect('user')
     args = {
@@ -54,7 +54,7 @@ def login_user(request):
         if user is not None and result['success']:
             login(request, user)
             if (user.is_staff):
-                return redirect('/admin') #change "user" accordingly for internal user
+                return redirect('/admin/') #change "user" accordingly for internal user
             else:
                 return redirect('user')
             messages.success(request, 'New comment added with success!')
@@ -170,7 +170,8 @@ def transaction_confirmation(request, transaction_id):
 @external_user_required()
 def profile(request):
     args = {
-        'user': request.user.username
+        # 'user': request.user.username,
+        'firstName' : request.user.first_name,
     }
     return render(request, 'SecureBank/edit_profile.html', args)
 
@@ -180,6 +181,7 @@ def profile(request):
 def home_external_user(request):
     args = {
         'user': request.user.username,
+        'firstName' : request.user.first_name,
         'accounts': request.user.bankuser.account_set.all(),
         'totalBalance':''
     }
@@ -188,7 +190,8 @@ def home_external_user(request):
         balance =balance + account.Balance
     print(balance)
     args['totalBalance'] = balance
-    print(args['totalBalance'])
+    args['lastLogin'] = request.user.last_login
+    print(args)
     return render(request, 'SecureBank/summary.html', args)
 
 
@@ -238,6 +241,6 @@ def authorize_transaction(request):
             print("Status", status)
         else:
             args['error']="Wrong Option!!"
-        return redirect('/admin')
+        return redirect('/admin/')
     return render(request, 'SecureBank/authorize_transaction.html', args)  # change "summary.html" accordingly for internal user
 
