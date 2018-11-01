@@ -50,7 +50,6 @@ def login_user(request):
         req = urllib.request.Request(url, data=data)
         response = urllib.request.urlopen(req)
         result = json.loads(response.read().decode())
-
         print("User == None", user is None)
         if user is not None and result['success']:
         # if user is not None and response:
@@ -59,9 +58,8 @@ def login_user(request):
                 return redirect('/admin') #change "user" accordingly for internal user
             else:
                 return redirect('user')
-            messages.success(request, 'New comment added with success!')
         else:
-            args['wrong_credentials'] = True
+            # args['wrong_credentials'] = True
             messages.error(request, 'Invalid reCAPTCHA. Please try again.')
         return render(request, 'SecureBank/login.html', args)
 
