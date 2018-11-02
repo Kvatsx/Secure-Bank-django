@@ -37,8 +37,7 @@ def pki_util(obj):
 class ProfileEditRequestAdmin(admin.ModelAdmin):
     list_display = ('user', 'newEmail', 'Status')
     list_filter = ('Status', 'user',)
-    fields = ('user', 'newEmail', 'Status')
-
+    # fields = ('user', 'Status', 'newEmail')
     actions = ['approve', 'reject']
 
 
@@ -49,7 +48,15 @@ class ProfileEditRequestAdmin(admin.ModelAdmin):
     def get_username(self, instance):
         return instance.username
     get_username.short_description = 'username'
-    
+        
+    def change_view(self,request,object_id,extra_content=None):
+        self.exclude = ('user', 'Status', 'newEmail')
+        return super(ProfileEditRequestAdmin, self).change_view(request,object_id)
+
+    def add_view(self,request,extra_content=None):
+        self.exclude = ()
+        return super(ProfileEditRequestAdmin, self).add_view(request)
+        
     def approve(self, request, queryset):
         selected = len(queryset)
         rows_updated = 0
@@ -114,10 +121,10 @@ class ProfileEditRequestAdmin(admin.ModelAdmin):
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('Amount','Type', 'Status', 'FromAccount', 'ToAccount', 'CreationTime')
     list_filter = ('Status', 'Type', 'CreationTime', 'FromAccount', 'ToAccount')
-    fields = ('Amount', 'FromAccount', 'ToAccount', 'Employee')
+    # fields = ('Amount', 'FromAccount', 'ToAccount', 'Employee')
 
-    # def add_view(self,request,extra_content=None):
-    #     # self.include = ('Amount', 'Status','CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')
+    def add_view(self,request,extra_content=None):
+        self.exclude = ()
     #     # self.fields['Amount'].required = True
     #     # self.fields['Type'].required = True
     #     # self.fields['Status'].required = True
@@ -125,7 +132,7 @@ class TransactionAdmin(admin.ModelAdmin):
     #     # self.fields['ToAccount'].required = True
     #     # self.fields['CreationTime'].required = True
     #     # self.fields['Employee'].required = True
-    #     return super(TransactionAdmin, self).add_view(request)
+        return super(TransactionAdmin, self).add_view(request)
 
     def change_view(self,request,object_id,extra_content=None):
         self.exclude = ('Amount', 'Status', 'CreationTime', 'FromAccount', 'ToAccount', 'Employee', 'Type')

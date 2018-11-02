@@ -66,7 +66,11 @@ def login_user(request):
 @login_required()
 @external_user_required()
 def logout_user(request):
-    # if request.method == 'POST':
+    if request.session:
+        messages.success(request, 'Successfully Logged Out')
+    else:
+        # print("here")
+        messages.error(request, 'Session Expired, Please Login Again')
     logout(request)
     return redirect('login')
     #else:
