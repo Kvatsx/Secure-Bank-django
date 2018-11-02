@@ -17,7 +17,6 @@ from django.conf import settings
 from .models import Transaction, BankUser, ProfileEditRequest
 from .decorators import external_user_required, internal_user_required
 from django.db.models import Q
-from django.contrib.sessions.models import Session
 
 # Create your views here.
 
@@ -103,7 +102,9 @@ def fundtransfer(request):
             messages.error(request, err)
         return render(request, 'SecureBank/funds_transfer.html', args)
     print(request.user.bankuser.generateOTP())
+
     request.session['transaction_id'] = transaction.id
+
     return redirect("transaction_confirmation", transaction_id=transaction.id)
 
 @login_required()
@@ -163,7 +164,9 @@ def funddebit(request):
             messages.error(request, err)
         return render(request, 'SecureBank/fund_debit.html', args)
     print(request.user.bankuser.generateOTP())
+
     request.session['transaction_id'] = transaction.id
+    
     return redirect("transaction_confirmation", transaction_id=transaction.id)
 
 
