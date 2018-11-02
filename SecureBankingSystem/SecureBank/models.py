@@ -11,6 +11,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import transaction
 from passlib.hash import pbkdf2_sha256
 from django.core.validators import validate_email
+from django.utils import timezone
+import datetime
 
 
 
@@ -289,10 +291,20 @@ class Transaction(models.Model):
         if self.FromAccount is None:
             raise SecureBankException("Invalid Access")
 
+        timediff = (datetime.datetime.now(timezone.utc) - self.CreationTime).total_seconds()
+        print(timediff)
+        if not (timediff<=120 and timediff>=0):
+            print("expired otp")
+            print(self.Status)
+            self.Status = 'E'
+            self.save()
+            raise SecureBankException('Expired OTP')
+
+
         if (self.Status == 'O' or self.Status == 'E') and (not self.FromAccount.AccountHolder.verifyOTP(otpvalue, transaction_key)):
             print(self.Status)
             self.Status = 'E'
-            self.save
+            self.save()
             raise SecureBankException('Invalid OTP/ key')
 
         if self.Amount > BankUser.MAX_AUTO_AUTH or self.Type == 'D':
