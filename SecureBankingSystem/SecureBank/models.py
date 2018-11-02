@@ -42,6 +42,7 @@ class BankUser(models.Model):
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
     publicKey = models.CharField(max_length=10000, default='0', editable=True)
+    baseForOtp = models.CharField(max_length=10000, default='base32secret3232', editable=False)
 
 
     # private_key = models.CharField()
@@ -62,10 +63,10 @@ class BankUser(models.Model):
     # https://pyotp.readthedocs.io/en/latest/
     def generateOTP(self):
 
-        baseForOtp = 'base32secret3232'
-        print(baseForOtp)
-        print("base", type(baseForOtp))
-        otp = TOTP(baseForOtp, interval=100).now()
+        self.baseForOtp = random_base32()
+        print(self.baseForOtp)
+        print("base", type(self.baseForOtp))
+        otp = TOTP(self.baseForOtp, interval=120).now()
         self.otp_value = otp
         self.save()
         subject = 'OTP From Secure Bank'
@@ -83,11 +84,12 @@ class BankUser(models.Model):
     def verifyOTP(self, otp, transaction_key):
         # emsg=pbkdf2_sha256.encrypt(self.publicKey, rounds=12000, salt_size=32)
 
-        baseForOtp = 'base32secret3232'
+        baseForOtp = self.baseForOtp
         print(baseForOtp)
         print("base", type(baseForOtp))
+        print(self.otp_value)
         print(otp)
-        pot = TOTP(baseForOtp, interval=100)
+        pot = TOTP(baseForOtp, interval=120)
         value = pot.verify(otp)
         print('value', value)
 
@@ -291,7 +293,7 @@ class Transaction(models.Model):
             print(self.Status)
             self.Status = 'E'
             self.save
-            raise SecureBankException('Invalid OTP')
+            raise SecureBankException('Invalid OTP/ key')
 
         if self.Amount > BankUser.MAX_AUTO_AUTH or self.Type == 'D':
             self.Status = 'A'
