@@ -10,15 +10,16 @@
 					<tr>
                         <th>Creation Date</th>
 						<th>Transaction Number</th>
+						<th>Amount</th>
+						<th>Type</th>
 						<th>From Account</th>
                         <th>To Account</th>
-                        <th>Amount</th>
                         <th>Status</th>
 					</tr>
 				</thead>
 				<tbody clas="summary-accounts-body">
 				{% for transaction in transactions %}
-                <tr><td>{{transaction.CreationTime}}</td><td>{{ transaction.id }}</td><td>{{ transaction.FromAccount.AccountNumber }}</td><td>{{ transaction.ToAccount.AccountNumber }}</td><td>{{ transaction.Amount }}</td><td>{% if transaction.Status == 'O' %} OTP Required {% endif %}{% if transaction.Status == 'A' %} Approval required {% endif %}{% if transaction.Status == 'P' %} Processed {% endif %}{% if transaction.Status == 'R' %} Rejected {% endif %}{% if transaction.Status == 'E' %} Unsuccessful {% endif %}
+                <tr><td>{{transaction.CreationTime}}</td><td>{{ transaction.id }}</td><td>{{ transaction.Amount }}</td><td>{{ transaction.get_Type_display }}</td><td>{{ transaction.FromAccount.AccountNumber }}</td><td>{{ transaction.ToAccount.AccountNumber }}</td><td>{% if transaction.Status == 'O' %} OTP Required {% endif %}{% if transaction.Status == 'A' %} Approval required {% endif %}{% if transaction.Status == 'P' %} Processed {% endif %}{% if transaction.Status == 'R' %} Rejected {% endif %}{% if transaction.Status == 'E' %} Unsuccessful {% endif %}
 </td></tr>
 				{% endfor %}
 				</tbody>
