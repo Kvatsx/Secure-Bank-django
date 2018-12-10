@@ -11,6 +11,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import transaction
 from passlib.hash import pbkdf2_sha256
 from django.core.validators import validate_email
+from django.utils import timezone
+import datetime
 
 
 
@@ -37,11 +39,12 @@ class BankUser(models.Model):
     # UID ( Primary Key ), Last Login, Last transaction, last password change, failed login attempt, type of user
     user = models.OneToOneField(User, unique=True, on_delete=CASCADE, primary_key=True)
     phone = models.CharField(max_length=10)
-    EmailID = models.EmailField(max_length=70, null=False)
+    # EmailID = models.EmailField(max_length=70, null=False)
     address = models.CharField(max_length=250)
     otp_value = models.CharField(max_length=16, default='0', editable=False)
     type_of_user = models.CharField(max_length=1, choices=TYPES)
     publicKey = models.CharField(max_length=10000, default='0', editable=True)
+    baseForOtp = models.CharField(max_length=10000, default='base32secret3232', editable=False)
 
 
     # private_key = models.CharField()
@@ -62,17 +65,17 @@ class BankUser(models.Model):
     # https://pyotp.readthedocs.io/en/latest/
     def generateOTP(self):
 
-        baseForOtp = 'base32secret3232'
-        print(baseForOtp)
-        print("base", type(baseForOtp))
-        otp = TOTP(baseForOtp, interval=100).now()
+        self.baseForOtp = random_base32()
+        print(self.baseForOtp)
+        print("base", type(self.baseForOtp))
+        otp = TOTP(self.baseForOtp, interval=120).now()
         self.otp_value = otp
         self.save()
         subject = 'OTP From Secure Bank'
         message = self.otp_value
         from_email = 'systemadmin007@gmail.com'
-        print(self.EmailID)
-        to = [self.EmailID]
+        print(self.user.email)
+        to = [self.user.email]
         print(self.otp_value)
         send_mail(subject, message, from_email, to, fail_silently=False)
         return self.otp_value
@@ -83,11 +86,12 @@ class BankUser(models.Model):
     def verifyOTP(self, otp, transaction_key):
         # emsg=pbkdf2_sha256.encrypt(self.publicKey, rounds=12000, salt_size=32)
 
-        baseForOtp = 'base32secret3232'
+        baseForOtp = self.baseForOtp
         print(baseForOtp)
         print("base", type(baseForOtp))
+        print(self.otp_value)
         print(otp)
-        pot = TOTP(baseForOtp, interval=100)
+        pot = TOTP(baseForOtp, interval=120)
         value = pot.verify(otp)
         print('value', value)
 
@@ -120,8 +124,8 @@ class BankUser(models.Model):
         return pot.verify(otp) and flag
 
     def EditEmail(self, newEmail):
-        self.EmailID = newEmail
-        self.save()
+        self.user.email = newEmail
+        self.user.save()
 
 
 
@@ -182,12 +186,12 @@ class Transaction(models.Model):
         ('D', 'Debit'),
         ('T', 'Transfer'),
     )
-    Employee = models.ForeignKey(BankUser, null=True, blank=True, on_delete=SET_NULL)
-    FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=True)
-    ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=True)
-    Amount = models.IntegerField(default=0, editable=False)
-    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
-    Type = models.CharField(max_length=1,default='T',choices=TYPE,editable=False)
+    Employee = models.ForeignKey(BankUser, null=True, blank=False, on_delete=SET_NULL)
+    FromAccount = models.ForeignKey(Account, null=True, related_name='FromAccount', on_delete=SET_NULL, blank=False)
+    ToAccount = models.ForeignKey(Account, null=True, related_name='ToAccount', on_delete=SET_NULL, blank=False)
+    Amount = models.IntegerField(default=0, editable=True)
+    Status = models.CharField(max_length=1, choices=STATUS, editable=True)
+    Type = models.CharField(max_length=1, default='T',choices=TYPE,editable=True)
     CreationTime = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
@@ -200,7 +204,8 @@ class Transaction(models.Model):
             return str(self.id) + " " + str(self.ToAccount.AccountNumber) + " " + str(self.Amount)
 
     @staticmethod
-    def Create(user,fromAccountNumber, toAccountNumber, amount):
+    def Create(user, fromAccountNumber, toAccountNumber, amount):
+        print("create")
         try:
             amount = int(amount.strip())
             fromAccountNumber = int(fromAccountNumber.strip())
@@ -286,11 +291,21 @@ class Transaction(models.Model):
         if self.FromAccount is None:
             raise SecureBankException("Invalid Access")
 
+        timediff = (datetime.datetime.now(timezone.utc) - self.CreationTime).total_seconds()
+        print(timediff)
+        if not (timediff<=120 and timediff>=0):
+            print("expired otp")
+            print(self.Status)
+            self.Status = 'E'
+            self.save()
+            raise SecureBankException('Expired OTP')
+
+
         if (self.Status == 'O' or self.Status == 'E') and (not self.FromAccount.AccountHolder.verifyOTP(otpvalue, transaction_key)):
             print(self.Status)
             self.Status = 'E'
-            self.save
-            raise SecureBankException('Invalid OTP')
+            self.save()
+            raise SecureBankException('Invalid OTP/ key')
 
         if self.Amount > BankUser.MAX_AUTO_AUTH or self.Type == 'D':
             self.Status = 'A'
@@ -346,10 +361,10 @@ class ProfileEditRequest(models.Model):
         ('R', 'Rejected'),
         ('E', 'Unsuccessful'),
     )
-    Status = models.CharField(max_length=1, choices=STATUS, editable=False)
+    Status = models.CharField(max_length=1, choices=STATUS, editable=True)
 
-    def _str_(self):
-        return "Change "+ self.user.EmailID + " To " + self.newEmail
+    def __str__(self):
+        return "Change "+ self.user.user.email + " To " + self.newEmail
 
     @staticmethod
     def CreateProfileEditRequest(user, oldEmail, newEmail):
@@ -358,11 +373,11 @@ class ProfileEditRequest(models.Model):
             validate_email(newEmail)
             validate_email(oldEmail)
         except:
-            raise SecureBankException("Wrong Email Type!!")
+            raise SecureBankException("Enter Valid Email")
         print("Done2")
         #Checking username of the user and and input user
-        if user.EmailID != oldEmail:
-            raise SecureBankException("Trying to access someones else account")
+        if user.user.email != oldEmail:
+            raise SecureBankException("Old Email Wrong!")
         print("Done3")
         editRequest = ProfileEditRequest(user= user, newEmail =newEmail, Status='A')
         print("Done")
@@ -385,5 +400,11 @@ class ProfileEditRequest(models.Model):
     def RejectProfileEditRequest(self):
         print("Reject Edit Request Here")
         self.Status = 'R'
+        self.save()
+        return self.Status
+    
+    def mark_error(self):
+        print("error Edit Request Here")
+        self.Status = 'E'
         self.save()
         return self.Status

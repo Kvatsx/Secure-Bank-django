@@ -29,8 +29,8 @@
 
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
                     for="userpage-menu-lower-left">
-                  <li class="mdl-menu__item">Edit Profile</li>
-                  <a href="{% url 'logout' %}"><li class="mdl-menu__item logout-button">Logout</li></a>
+                    <a href="{% url 'profile' %}"><li class="mdl-menu__item">Edit Profile</li></a>
+                    <a href="{% url 'logout' %}"><li class="mdl-menu__item logout-button">Logout</li></a>
               </ul>
             </div>
         </header>
@@ -38,7 +38,6 @@
             <header class="userpage-drawer-header">
                 <div class="mdl-list__item">
                     <span class="mdl-list__item-primary-content">
-                        <!-- <img class="sbs-logo-image" src = "{% static 'SecureBank/avatar.png' %}"/> -->
                         <i class="material-icons mdl-list__item-avatar">person</i>
                         <span class="userpage-username">{{firstName}}</span>
                     </span>

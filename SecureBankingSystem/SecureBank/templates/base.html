@@ -16,8 +16,26 @@
         
     </head>
     <body oncontextmenu="return false">
+        <div id="message-snackbar" class="mdl-js-snackbar mdl-snackbar">
+            <div class="mdl-snackbar__text"></div>
+            <button class="mdl-snackbar__action" type="button"></button>
+        </div>
 		{% block body %}
             base class
         {% endblock %}
     </body>
+    {% for message in messages %}
+    <script>
+        r( function() {
+            'use strict';
+            var snackbarContainer = document.getElementById('message-snackbar');
+            var data = {
+                message: "{{message}}",
+                timeout: 2000,
+            };
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
+        });
+        function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
+    </script>
+    {% endfor %}
 </html>
