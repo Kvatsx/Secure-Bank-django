@@ -26,10 +26,3 @@ SecureBankSystem/
 				home.html
 			base.html		# Our base html file. All other html files extend this file.
 ```
-
-# TODO
-1. Implement backend for Login.
-2. Need to add captcha or OTP verification.
-3. Setup database for users.
-4. Create a user profile page with Navbar choices.
-5. Create a UI for required functions.
